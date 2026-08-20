@@ -12,6 +12,91 @@
 @use "sass:map";
 @use "sass:color";
 @import "aan-theme-kit";
+@import "fonts";
+
+// --- iBuy tokens as Sass vars (core → kit tokens) ---
+// iBuy tokens as Sass vars (core aliased to kit)
+$c-void: $surface-dark;
+$c-bg: $bg-page;
+$c-surface: $surface-card;
+$c-surface-2: #1C2027;
+$c-glass: rgba(11, 13, 16, 0.62);
+$c-glass-edge: rgba(255, 255, 255, 0.10);
+$c-line: $color-border;
+$c-line-strong: $color-border-2;
+$grid-line: rgba(255, 255, 255, 0.055);
+$c-text: $color-text;
+$c-text-soft: $color-ink-700;
+$c-text-muted: $color-muted;
+$c-text-dim: #565C64;
+$c-brand: $color-primary;
+$c-brand-hover: $color-accent-2;
+$c-brand-press: #B3121F;
+$c-brand-glow: rgba(222, 25, 42, 0.30);
+$c-focus: #6FA8FF;
+$map-dot: rgba(255, 255, 255, 0.34);
+$map-halo: rgba(255, 255, 255, 0.08);
+$section-glow: rgba(255, 255, 255, 0.045);
+$c-panel: #FFFFFF;
+$c-panel-ink: #14171C;
+$c-panel-muted: #565C63;
+$c-panel-dim: #878D95;
+$c-panel-line: rgba(20, 23, 28, 0.16);
+$c-panel-line-2: rgba(20, 23, 28, 0.38);
+$f-display: $font-display;
+$f-accent: $font-accent;
+$f-sans: $font-body;
+$f-mono: $font-mono;
+$fs-display: clamp(2.75rem, 1.35rem + 4.2vw, 5.25rem);
+$fs-h2: clamp(1.85rem, 1.2rem + 2.4vw, 3rem);
+$fs-h3: clamp(1.25rem, 1.05rem + 0.8vw, 1.625rem);
+$fs-lead: clamp(1rem, 0.94rem + 0.28vw, 1.1875rem);
+$fs-body: 1rem;
+$fs-sm: 0.875rem;
+$fs-xs: 0.8125rem;
+$fs-mono: 0.6875rem;
+$lh-display: 0.96;
+$lh-tight: 1.15;
+$lh-body: 1.6;
+$ls-display: -0.035em;
+$ls-tight: -0.02em;
+$ls-mono: 0.16em;
+$s-1: 0.25rem;
+$s-2: 0.5rem;
+$s-3: 0.75rem;
+$s-4: 1rem;
+$s-5: 1.25rem;
+$s-6: 1.5rem;
+$s-8: 2rem;
+$s-10: 2.5rem;
+$s-12: 3rem;
+$s-16: 4rem;
+$s-20: 5rem;
+$s-24: 6rem;
+$s-32: 8rem;
+$container: 1440px;
+$gutter: clamp(1.25rem, 0.5rem + 3vw, 4rem);
+$header-h: 96px;
+$header-h-stuck: 66px;
+$logo-h: 58px;
+$logo-h-stuck: 38px;
+$r-sm: 4px;
+$r-md: 6px;
+$r-lg: 10px;
+$ctl-h: 46px;
+$sh-card: 0 24px 60px -12px rgba(0, 0, 0, 0.65), 0 2px 8px rgba(0, 0, 0, 0.4);
+$sh-cta: 0 8px 24px -6px $c-brand-glow;
+$e-out: cubic-bezier(0.22, 1, 0.36, 1);
+$e-expo: cubic-bezier(0.16, 1, 0.30, 1);
+$e-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+$e-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+$t-fast: 180ms;
+$t-base: 320ms;
+$t-mid: 480ms;
+$t-slow: 760ms;
+$t-count: 1100ms;
+$z-header: 100;
+
 
 $sp: $space;                        // shorthand for map.get($sp, N)
 @function sp($n) { @return map.get($space, $n); }
@@ -122,15 +207,6 @@ h1 em, h2 em, .display em {
 .aan-section--page  { background: $bg-page; }
 .aan-section--alt   { background: $bg-row-alt; }
 
-// iBuy light section: flips the ground to bone with dark text (AA-tuned).
-.aan-section--light {
-  background: $bg-invert; color: $light-text;
-  h1, h2, h3, h4, h5, h6, .display { color: $light-text; }
-  p, .lead, .prose, .prose--lead { color: $light-text; }
-  .eyebrow { color: $light-muted; }
-  .prose { color: #3C4148; }
-  hr, .rule { border-color: $light-border; }
-}
 
 // ── Vertical construction lines (iBuy signature), 4-col overlay ──────────────
 .gridlines {
@@ -143,3 +219,1345 @@ h1 em, h2 em, .display em {
 }
 .aan-section--light .gridlines span { border-color: rgba(20,23,28,.09); }
 .aan-section > .container, .aan-section > .container-fluid { position: relative; z-index: 1; }
+
+
+/* ===== Появление на скролле (data-rise) — JS ставит --rise-i (не темизация) ===== */
+[data-rise]{opacity:0;transition:opacity 900ms $e-out calc(var(--rise-i,0)*130ms),transform 1100ms $e-expo calc(var(--rise-i,0)*130ms);}
+[data-rise]{transform:translateY(26px);}
+[data-rise="side"]{transform:translateX(-48px);}
+[data-rise="side-right"]{transform:translateX(48px);}
+[data-rise].is-in{transform:none;opacity:1;}
+@media (prefers-reduced-motion:reduce){[data-rise]{opacity:1;transform:none;transition:none;}}
+
+
+/* ================= ПЕРЕНЕСЁННЫЕ СЕКЦИИ ================= */
+
+
+/* ===== HEADER ===== */
+/* ==========================================================================
+   SECTION 01 — HERO  (v2)
+
+   Язык взят из референсов Alex, а не из дефолта:
+   · данные вписаны в перспективу кадра, с выносными линиями (elemets, MAP)
+   · нумерация глав + гигантская призрачная цифра (1home / Range Rover Velar)
+   · волосяная колоночная сетка и засечки по углам (RENON)
+   · конденсированные капсы (ELECTRA)
+   · моно-телеметрия
+
+   Чего здесь принципиально НЕТ: скруглений, backdrop-blur, карточек,
+   свечения под кнопкой, полосы «As seen in».
+   ========================================================================== */
+
+/* --- Шапка ---------------------------------------------------------------- */
+
+.header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: $z-header;
+  height: $header-h;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid transparent;
+  transition: background $t-base $e-out,
+              border-color $t-base $e-out,
+              height $t-mid $e-out;
+}
+.header.is-stuck {
+  height: $header-h-stuck;
+  background: $c-void;
+  border-bottom-color: $c-line;
+}
+.header__inner {
+  display: flex;
+  align-items: center;
+  gap: $s-8;
+}
+.header__logo {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+}
+/* Логотип ужимается вместе с шапкой. Кривая та же, что у высоты, — иначе
+   логотип и шапка приезжают в разное время, и это видно. */
+.header__logo img {
+  height: $logo-h;
+  width: auto;
+  transition: height $t-mid $e-out;
+}
+.header.is-stuck .header__logo img { height: $logo-h-stuck; }
+.header__nav {
+  display: flex;
+  align-items: center;
+  gap: $s-8;
+  margin-left: auto;
+}
+/* Пункты меню — моно-капсы с разрядкой. Не «ссылки на сайте», а подписи на
+   приборе. Крупнее и ярче обычного моно-лейбла: это навигация, её должно быть
+   видно, а не угадывать. */
+.header__link {
+  position: relative;
+  padding: $s-2 0;
+  font-family: $f-mono;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $c-text;
+  transition: color $t-fast $e-out;
+}
+.header__link:hover { color: $c-brand-hover; }
+.header__link::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform $t-base $e-out;
+}
+.header__link:hover::after { transform: scaleX(1); }
+.header__phone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $s-2;
+  min-height: 44px;
+  min-width: 44px;
+  padding: $s-2 $s-4;
+  border: 1px solid $c-line-strong;
+  border-radius: 0;
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: 0.08em;
+  transition: background $t-fast $e-out,
+              border-color $t-fast $e-out;
+}
+.header__phone:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: $c-text;
+}
+.header__phone svg { width: 14px; height: 14px; flex: none; }
+.header__burger {
+  display: none;
+  width: 44px; height: 44px;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid $c-line-strong;
+  border-radius: 0;
+}
+@media (max-width: 860px) {
+  .header__nav { display: none; }
+
+  .header__phone {
+    order: 2;
+    margin-left: auto;
+    padding: $s-2 $s-3;
+  }
+  .header__phone span { display: none; }
+
+  .header__burger { order: 3; display: inline-flex; }
+
+  /* stretch, а не flex-start: при flex-start блок сжимается по контенту,
+     а контент — лента с nowrap. Она распирала прибор шире экрана, и всё
+     лишнее просто срезалось body { overflow-x: hidden }. Тянем на 100%
+     и явно разрешаем сжатие через min-width: 0, иначе overflow-x у ленты
+     не работает — ей нужна определённая ширина. */
+  .hero__rail {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $s-4;
+  }
+
+  .instrument,
+  .lineup {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .lineup { gap: $s-3; }
+
+  /* Лента уезжает в горизонтальный скролл, а не сыпется в пять строк. */
+  .lineup__list {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: $s-5;
+    width: 100%;
+    min-width: 0;
+    padding-bottom: $s-1;
+    scrollbar-width: none;
+  }
+  .lineup__list::-webkit-scrollbar { display: none; }
+}
+
+/* ===== FOOTER (footer.css) ===== */
+/* ==========================================================================
+   FOOTER   (тёмная тема)
+
+   Собирает три требования клиента: сеть Marshall Goldman пятью адресами,
+   вордмарк материнского бренда, возврат к действию с подпиской. Язык тот же,
+   что у всей тёмной части: волосяные линейки, моно-лейблы, красный только на
+   действии.
+   ========================================================================== */
+
+.footer {
+  position: relative;
+  padding-block: $s-20 $s-10;
+  background: $c-void;
+  border-top: 1px solid $c-line;
+  overflow: hidden;
+}
+
+
+/* --- Возврат к действию + подписка ----------------------------------------- */
+
+.footer__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: $s-16;
+  align-items: end;
+  padding-bottom: $s-16;
+  border-bottom: 1px solid $c-line;
+}
+
+.footer__ask {
+  font-family: $f-display;
+  font-size: $fs-h3;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  max-width: 24ch;
+  margin-block: $s-4 $s-6;
+}
+
+/* Вторая строка — антиквой, как во всех заголовках (правило в base.css). */
+.footer__ask em { color: rgba(255, 255, 255, 0.94); }
+
+
+.signup__label {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: $ls-mono;
+  text-transform: uppercase;
+  color: $c-text-muted;
+  margin-bottom: $s-3;
+}
+
+/* Поле и кнопка в одну линию, без зазора: единый прибор, а не два элемента. */
+.signup__row {
+  display: flex;
+  gap: 0;
+}
+
+.signup__input {
+  flex: 1;
+  min-width: 0;
+  height: $ctl-h;
+  padding: 0 $s-4;
+  background: $c-surface-2;
+  border: 1px solid $c-line;
+  border-right: 0;
+  border-radius: 0;
+  color: $c-text;
+  font-family: $f-sans;
+  font-size: $fs-sm;
+}
+
+.signup__input::placeholder { color: $c-text-dim; }
+.signup__input:focus {
+  outline: none;
+  border-color: $c-text-muted;
+}
+
+.signup__row .btn { flex: none; }
+
+.signup__note {
+  margin-top: $s-3;
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $c-text-dim;
+}
+
+
+/* --- Колонки: сеть, навигация, контакты ------------------------------------ */
+
+.footer__cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: $s-16;
+  padding-block: $s-16;
+}
+
+.footer__head {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: $ls-mono;
+  text-transform: uppercase;
+  color: $c-text-muted;
+  margin-bottom: $s-6;
+}
+
+/* Сеть — пять адресов в две колонки, разделены линейками. */
+.fnet {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $s-8 $s-10;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.fnet > li {
+  padding-top: $s-4;
+  border-top: 1px solid $c-line;
+}
+
+.fnet__city {
+  font-family: $f-display;
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  line-height: 1;
+  margin-bottom: $s-2;
+}
+
+/* Штат — мелким моно рядом с городом, тише названия. */
+.fnet__city span {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: $c-text-dim;
+}
+.fnet__city b { color: $c-brand-hover; font-weight: 500; }
+
+.fnet__addr {
+  font-size: $fs-sm;
+  line-height: 1.5;
+  color: $c-text-muted;
+  margin-bottom: $s-2;
+  max-width: 26ch;
+}
+.fnet__addr--soon { color: $c-text-dim; }
+
+.fnet__phone {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: 0.08em;
+  color: $c-text-soft;
+  transition: color $t-fast $e-out;
+}
+.fnet__phone:hover { color: $c-text; }
+
+
+.flinks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: $s-3;
+}
+
+.flinks a {
+  display: inline-flex;
+  align-items: center;
+  gap: $s-3;
+  font-size: $fs-sm;
+  color: $c-text-soft;
+  transition: color $t-fast $e-out;
+}
+.flinks a:hover { color: $c-text; }
+
+.flinks__ig {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+
+/* --- Лента Instagram -------------------------------------------------------
+   Реальные машины клиента. Плитки квадратные, встык, без скруглений — это не
+   карточки, а именно лента. Красного нет: цвет держим для действия. */
+
+.iglive {
+  padding-block: $s-12 $s-16;
+  border-top: 1px solid $c-line;
+}
+
+.iglive__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: $s-6;
+  margin-bottom: $s-6;
+}
+
+/* .footer__head сбрасывает нижний отступ — здесь он на флексе. */
+.iglive__head .footer__head { margin-bottom: 0; }
+
+.iglive__handle {
+  display: inline-flex;
+  align-items: center;
+  gap: $s-2;
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $c-text-soft;
+  transition: color $t-fast $e-out;
+}
+.iglive__handle:hover { color: $c-text; }
+.iglive__handle svg { width: 15px; height: 15px; }
+
+.iglive__grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: $s-2;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.iglive__grid a {
+  position: relative;
+  display: block;
+  overflow: hidden;   /* кадрирует зум и режет углы картинке */
+  aspect-ratio: 1;
+  border-radius: $r-lg;
+}
+
+.iglive__grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(0.15);
+  transition: transform $t-slow $e-expo,
+              filter $t-base $e-out;
+}
+
+/* Наведение: кадр оживает цветом и чуть наезжает, поверх — знак Instagram. */
+.iglive__grid a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 9, 11, 0.55) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.6'%3E%3Crect x='2.5' y='2.5' width='19' height='19' rx='5'/%3E%3Ccircle cx='12' cy='12' r='4.2'/%3E%3Ccircle cx='17.4' cy='6.6' r='1' fill='white' stroke='none'/%3E%3C/svg%3E") center / 26px no-repeat;
+  opacity: 0;
+  transition: opacity $t-base $e-out;
+}
+.iglive__grid a:hover::after { opacity: 1; }
+.iglive__grid a:hover img { transform: scale(1.06); filter: grayscale(0); }
+
+
+/* --- Нижняя строка: iBuy + Marshall Goldman + правовое ---------------------- */
+
+.footer__base {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: $s-10;
+  padding-top: $s-10;
+  border-top: 1px solid $c-line;
+}
+
+.footer__logo img {
+  height: 46px;
+  width: auto;
+}
+
+/* Вордмарк Marshall Goldman. Набран нашим языком: капсы, красная черта между
+   словами — как в их фирменном начертании. Вектора нет, но связь с брендом
+   читается, а клиент требовал логотип обязательно. */
+.mglock {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $s-2;
+  justify-self: center;
+  text-align: center;
+}
+
+.mglock__div {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: $c-text-dim;
+}
+
+/* Настоящий вордмарк (SVG, монохром белым). Высотой держим в узде — исходник
+   415×55, на всю ширину он бы задавил iBuy рядом. */
+.mglock__mark {
+  display: block;
+  height: 28px;
+  width: auto;
+  transition: opacity $t-fast $e-out;
+}
+.mglock:hover .mglock__mark { opacity: 0.8; }
+
+
+.footer__legal {
+  justify-self: end;
+  text-align: right;
+}
+
+.footer__legal p {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $c-text-dim;
+  margin-bottom: $s-2;
+}
+
+/* Строка агентства — как на живом сайте. Тише всего в подвале: это выходные
+   данные, а не сообщение. */
+.footer__powered {
+  margin-top: $s-3;
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $c-text-dim;
+}
+
+.footer__legal nav {
+  display: inline-flex;
+  gap: $s-4;
+}
+.footer__legal a {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $c-text-muted;
+  transition: color $t-fast $e-out;
+}
+.footer__legal a:hover { color: $c-text; }
+
+
+/* ==========================================================================
+   Адаптив
+   ========================================================================== */
+
+@media (max-width: 1080px) {
+  .footer__cols { grid-template-columns: 1fr 1fr; }
+  .footer__col--net { grid-column: 1 / -1; }
+}
+
+@media (max-width: 760px) {
+  .footer { padding-block: $s-16 $s-8; }
+
+  /* Лента: 3 в ряд, последние три уходят на вторую строку. */
+  .iglive__grid { grid-template-columns: repeat(3, 1fr); }
+
+  .footer__top {
+    grid-template-columns: 1fr;
+    gap: $s-10;
+  }
+
+  .fnet { grid-template-columns: 1fr; }
+  .footer__cols { grid-template-columns: 1fr; gap: $s-10; }
+
+  /* Нижняя строка в столбец: три элемента в ряд на телефоне не помещаются. */
+  .footer__base {
+    grid-template-columns: 1fr;
+    justify-items: start;
+    gap: $s-8;
+  }
+  .mglock { justify-self: start; align-items: flex-start; text-align: left; }
+  .footer__legal { justify-self: start; text-align: left; }
+}
+
+
+/* ===== FOOTER3 ===== */
+/* ==========================================================================
+   FOOTER v3 — структурированная финальная глава (только index_3)
+
+   Один подвал, четыре уровня по убыванию веса (выдох вниз):
+   1. основная навигация одностраничника — сильнейшая иерархия;
+   2. сеть — полноширинная полоса, волосяные линейки, не карточки;
+   3. SEO-каталог — тише всего, полный список марок в <details>;
+   4. правовая строка — компактная и тихая.
+
+   Язык и токены — общие с footer.css (его атомы переиспользованы). Здесь только
+   новая структура и тональная иерархия. Красного минимум, карточек нет.
+   ========================================================================== */
+
+
+/* --- УРОВЕНЬ 1 — основная навигация ---------------------------------------- */
+
+.fnav {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: $s-10 $s-16;
+  padding-block: $s-16;
+}
+
+/* «Sell your car» — навигация одностраничника, главный путь: ярче голова
+   (тонкой красной засечкой) и крупнее/светлее ссылки, чем у остальных групп. */
+.fnav__group--primary .footer__head {
+  display: inline-flex;
+  align-items: center;
+  gap: $s-3;
+  color: $c-text-soft;
+}
+.fnav__group--primary .footer__head::before {
+  content: '';
+  width: 14px;
+  height: 2px;
+  background: $c-brand;
+}
+
+.flinks--lead {
+  gap: $s-4;
+}
+.flinks--lead a {
+  font-family: $f-display;
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  line-height: 1.05;
+  color: $c-text;
+}
+.flinks--lead a:hover { color: $c-brand-hover; }
+
+/* Телефон в «Reach us» — чуть весомее прочих контактов: это ключевая связь. */
+.flinks__strong {
+  font-family: $f-mono;
+  letter-spacing: 0.08em;
+  color: $c-text !important;
+}
+
+
+/* --- УРОВЕНЬ 2 — сеть, полноширинная полоса -------------------------------- */
+
+.fnet-wide {
+  padding-block: $s-16;
+  border-top: 1px solid $c-line;
+}
+
+/* Пять локаций в ряд, разделены линейками (верхняя граница у каждой — из
+   footer.css .fnet > li). Не карточки: только типографика и хайрлайны. */
+.fnet--row {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0 $s-8;
+}
+.fnet--row > li {
+  padding-top: $s-4;
+  padding-right: $s-6;
+}
+/* Город чуть мельче, чтобы пять уместились без сжатия. */
+.fnet--row .fnet__city { font-size: 1.1875rem; }
+.fnet--row .fnet__addr { font-size: $fs-xs; max-width: 22ch; }
+
+
+/* --- УРОВЕНЬ 3 — SEO-каталог (тише всего) ---------------------------------- */
+
+.fdir {
+  padding-block: $s-16 $s-12;
+  border-top: 1px solid $c-line;
+}
+
+/* Голова каталога — приглушённее навигации: это не продающий путь. */
+/* muted, не dim: dim (#565C64) на near-black даёт 2.95:1 — ниже AA 4.5.
+   «Тише» несёт не цвет, а размер и позиция. */
+.footer__head--quiet { color: $c-text-muted; }
+
+.fdir__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 2fr);
+  gap: $s-10 $s-16;
+}
+
+/* Заголовки колонок каталога — явные: крупнее, ярче (soft), с тонкой линейкой
+   снизу, чтобы читались как заголовки, а не как микро-лейблы. */
+.fdir__label {
+  font-family: $f-mono;
+  font-size: $fs-xs;
+  font-weight: 500;
+  letter-spacing: $ls-mono;
+  text-transform: uppercase;
+  color: $c-text-soft;
+  margin-bottom: $s-5;
+  padding-bottom: $s-3;
+  border-bottom: 1px solid $c-line;
+}
+
+.fdir__links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: $s-3;
+}
+.fdir__links a {
+  font-size: $fs-sm;
+  color: $c-text-muted;   /* тише основной навигации */
+  transition: color $t-fast $e-out;
+}
+.fdir__links a:hover { color: $c-text-soft; }
+
+/* Популярные марки — в несколько колонок, но всё ещё спокойно. */
+.fdir__links--makes {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $s-3 $s-8;
+  margin-bottom: $s-6;
+}
+
+
+/* Полный список — статичный, всегда раскрыт (без дропдауна). Все ссылки в DOM. */
+.fdir__all {
+  border-top: 1px solid $c-line;
+  padding-top: $s-5;
+}
+.fdir__sublabel {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: $ls-mono;
+  text-transform: uppercase;
+  color: $c-text-muted;
+}
+
+/* (устаревшее) стили бывшего <details> — оставлены неиспользуемыми */
+.fdetails {
+  border-top: 1px solid $c-line;
+  padding-top: $s-5;
+}
+
+.fdetails__summary {
+  display: inline-flex;
+  align-items: center;
+  gap: $s-3;
+  cursor: pointer;
+  list-style: none;                 /* убираем дефолтный маркер */
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: $ls-mono;
+  text-transform: uppercase;
+  color: $c-text-soft;
+  padding: $s-2 0;
+  transition: color $t-fast $e-out;
+}
+.fdetails__summary::-webkit-details-marker { display: none; }
+.fdetails__summary:hover { color: $c-text; }
+.fdetails__summary:focus-visible {
+  outline: 2px solid $c-focus;
+  outline-offset: 3px;
+}
+
+.fdetails__chevron {
+  transition: transform $t-base $e-out;
+}
+.fdetails[open] .fdetails__chevron { transform: rotate(180deg); }
+
+/* Раскрытый список — ещё тише и мельче, в четыре колонки. */
+.fdir__links--all {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: $s-2 $s-8;
+  margin-top: $s-5;
+}
+.fdir__links--all a {
+  font-size: $fs-xs;
+  color: $c-text-muted;   /* AA: dim бы дал 2.95:1; тишину держит fs-xs */
+}
+.fdir__links--all a:hover { color: $c-text-soft; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fdetails__chevron { transition: none; }
+}
+
+
+/* ==========================================================================
+   Адаптив
+   ========================================================================== */
+
+@media (max-width: 1080px) {
+  .fnav { grid-template-columns: 1fr 1fr; gap: $s-12 $s-16; }
+  .fnet--row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: $s-8; }
+  .fdir__links--all { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 760px) {
+  .fnav { grid-template-columns: 1fr; gap: $s-10; }
+  .flinks--lead a { font-size: 1.25rem; }
+
+  .fnet-wide { padding-block: $s-12; }
+  .fnet--row { grid-template-columns: 1fr; gap: 0; }
+  .fnet--row > li { padding-right: 0; }
+
+  .fdir__grid { grid-template-columns: 1fr; gap: $s-10; }
+  .fdir__links--makes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fdir__links--all { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+
+/* --- AA-фиксы для index_3 -------------------------------------------------
+   dim-токен (#565C64) на near-black = 2.95:1, ниже AA 4.5. Поднимаем текст,
+   который в общем footer.css остаётся dim, до muted (5.2:1) — только здесь. */
+.fnet--row .fnet__addr--soon,
+.footer__legal p,
+.footer__powered {
+  color: $c-text-muted;
+}
+
+
+/* --- Простой текст и внешняя ссылка --------------------------------------
+   Марки без своей страницы (Acura NSX, Koenigsegg, Lotus, Spyker) — не ссылки,
+   а <span>: тот же приглушённый тон, что у ссылок рядом, но без ховера. */
+.fdir__links--all span {
+  font-size: $fs-xs;
+  color: $c-text-muted;
+}
+
+/* «All Auto Network» — единственная внешняя атрибуция; тон наследуется, ярче на ховере. */
+.footer__powered a {
+  color: inherit;
+  text-decoration: none;
+  transition: color $t-fast $e-out;
+}
+.footer__powered a:hover { color: $c-text-soft; }
+
+
+/* ===== PAGE PRIMITIVES ===== */
+/* ==========================================================================
+   PAGE — эталон внутренней страницы (About как первый носитель)
+
+   Задача: один шаблон для любых инфо-страниц (About, Why iBuy, Our process…).
+   Тёмный ground на всю страницу — бесшовно с подвалом, без резкого светлого
+   стыка. Ритм строится на волосяных линейках и двухколоночном ряде
+   «эйбрау+заголовок слева — содержимое справа». Никаких коробок, красный —
+   только на CTA (наследуется из base .btn). Язык и токены — общие с сайтом.
+   ========================================================================== */
+
+.page { padding-top: $header-h; }        /* из-под фиксированной шапки */
+
+
+/* --- Ритм секций ----------------------------------------------------------
+   Выдох вниз: нижний отступ больше верхнего. Секции разделены одной линейкой,
+   а не фоном или рамкой. */
+.psection {
+  position: relative;
+  padding-block: $s-16 $s-20;
+  border-top: 1px solid $c-line;
+}
+
+/* Двухколоночный ряд — основной модуль страницы.
+   Слева «телеметрия» раздела (эйбрау + заголовок), справа — содержимое. */
+.prow {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 2fr);
+  gap: $s-8 $s-16;
+  align-items: start;
+}
+.prow__head {
+  font-family: $f-display;
+  font-weight: 700;
+  font-size: clamp(1.75rem, 1.15rem + 2.4vw, 2.75rem);
+  line-height: 1.02;
+  letter-spacing: $ls-tight;
+  margin-top: $s-4;
+}
+
+
+/* --- Проза ----------------------------------------------------------------- */
+.prose { max-width: 62ch; color: $c-text-soft; }
+.prose p + p { margin-top: $s-5; }
+.prose strong { color: $c-text; font-weight: 600; }
+
+.prose--lead {
+  max-width: 52ch;
+  font-size: clamp(1.125rem, 1rem + 0.6vw, 1.4rem);
+  line-height: 1.5;
+  color: $c-text-soft;
+}
+
+
+/* --- Герой страницы -------------------------------------------------------- */
+.phero {
+  position: relative;
+  padding-block: $s-20 $s-16;
+  overflow: hidden;
+}
+.phero__inner { position: relative; z-index: 1; max-width: 54rem; }
+.phero h1 {
+  font-size: clamp(2.75rem, 1.5rem + 5.4vw, 6rem);
+  line-height: 0.98;
+  margin-top: $s-6;
+}
+.phero .prose--lead { margin-top: $s-8; max-width: 46ch; }
+.phero__cta {
+  display: flex;
+  gap: $s-4;
+  margin-top: $s-10;
+  flex-wrap: wrap;
+}
+
+
+/* Роль под именем в двухколоночном ряде (напр. «Founder, President & CEO») */
+.prole {
+  margin-top: $s-3;
+  font-size: $fs-sm;
+  color: $c-text-muted;
+}
+
+
+/* --- Кинематографичный фулл-блид герой (фон-фото + текст поверх) -----------
+   Фото на всю площадь; тёмный градиент слева и снизу даёт читаемость (AA) и
+   держит машину доминантой. Текст подчинён, на затемнённом поле. */
+.chero {
+  position: relative;
+  min-height: min(92vh, 860px);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: $c-void;
+}
+.chero__media { position: absolute; inset: 0; margin: 0; }
+.chero__media img { width: 100%; height: 100%; object-fit: cover; object-position: 62% 55%; }
+.chero__media::after {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, rgba(8,9,11,0.88) 0%, rgba(8,9,11,0.55) 28%, rgba(8,9,11,0.06) 58%, rgba(8,9,11,0) 100%),
+    linear-gradient(0deg, rgba(8,9,11,0.55) 0%, rgba(8,9,11,0) 38%);
+}
+.chero > .container { position: relative; z-index: 1; padding-block: $s-16; }
+.chero__inner { max-width: 44ch; }
+.chero h1 {
+  font-size: clamp(2.75rem, 1.5rem + 4.8vw, 5.25rem);
+  line-height: 0.98;
+  margin-top: $s-6;
+}
+.chero__cta { display: flex; gap: $s-4; margin-top: $s-8; flex-wrap: wrap; }
+
+@media (max-width: 640px) {
+  .chero__media::after {
+    background:
+      linear-gradient(0deg, rgba(8,9,11,0.9) 8%, rgba(8,9,11,0.35) 45%, rgba(8,9,11,0.5) 100%);
+  }
+}
+
+
+/* --- Кинематографичная плашка во всю ширину (фото-пауза) ------------------- */
+.cplate { position: relative; height: min(68vh, 640px); overflow: hidden; background: $c-void; }
+.cplate img { width: 100%; height: 100%; object-fit: cover; object-position: center 44%; display: block; }
+
+
+/* --- Герой страницы марки: АВТО — доминанта ------------------------------
+   Машина занимает правые две трети и уходит в край; слева она растворяется в
+   void (выплывает из темноты). Текст — подчинён, на тёмном поле слева. Одна
+   доминанта, ясная фигура-фон, тональность держится в ч/б. */
+.mhero {
+  position: relative;
+  min-height: min(90vh, 840px);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: $c-void;
+}
+.mhero > .container { position: relative; z-index: 1; padding-block: $s-12; }
+.mhero__inner { max-width: 40ch; }
+.mhero h1 {
+  font-size: clamp(2.75rem, 1.5rem + 4.8vw, 5.25rem);
+  line-height: 0.98;
+  margin-top: $s-6;
+}
+.mhero__cta { display: flex; gap: $s-4; margin-top: $s-8; flex-wrap: wrap; }
+
+.mhero__media { position: absolute; inset: 0 0 0 auto; width: 66%; margin: 0; }
+.mhero__media img { width: 100%; height: 100%; object-fit: cover; object-position: 40% 62%; }
+.mhero__media::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg,
+    $c-void 3%, rgba(8, 9, 11, 0.55) 24%, rgba(8, 9, 11, 0) 52%);
+}
+
+@media (max-width: 860px) {
+  .mhero { flex-direction: column; min-height: 0; }
+  .mhero__media { position: relative; width: 100%; height: 62vw; max-height: 400px; }
+  .mhero__media img { object-position: 40% 50%; }
+  .mhero__media::after {
+    background: linear-gradient(0deg, $c-void 2%, rgba(8, 9, 11, 0) 52%);
+  }
+  .mhero__inner { max-width: none; }
+  .mhero > .container { padding-block: $s-10 $s-16; }
+}
+
+
+/* --- Секция марки: крупное фото + текст (фото ведёт композицию) ------------ */
+.msplit {
+  display: grid;
+  grid-template-columns: 0.92fr 1.08fr;
+  gap: $s-10 $s-16;
+  align-items: center;
+}
+.msplit__media { margin: 0; }
+.msplit__media img { width: 100%; height: auto; display: block; }
+.msplit__text .prose { margin-top: $s-6; }
+@media (max-width: 860px) {
+  .msplit { grid-template-columns: 1fr; }
+}
+
+
+/* --- Сплит-герой (устаревший вариант, оставлен неиспользуемым) ------------- */
+.phero__split {
+  display: grid;
+  grid-template-columns: 1.02fr 0.98fr;
+  gap: $s-12 $s-16;
+  align-items: center;
+}
+.phero--split .phero__inner { max-width: none; }
+.phero--split h1 { font-size: clamp(2.25rem, 1.4rem + 2.8vw, 3.75rem); }
+.phero__media { margin: 0; }
+.phero__media img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid $c-line;
+}
+
+
+/* --- Трёхшаговый процесс (реальная последовательность → нумеруем) ---------- */
+.psteps {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $s-10 $s-8;
+  margin-top: $s-10;
+}
+.pstep { border-top: 1px solid $c-line-strong; padding-top: $s-5; }
+.pstep__n {
+  font-family: $f-display;
+  font-weight: 700;
+  font-size: 2.25rem;
+  line-height: 1;
+  letter-spacing: $ls-tight;
+  color: $c-text-muted;
+}
+.pstep__t {
+  font-family: $f-display;
+  font-weight: 700;
+  font-size: 1.375rem;
+  letter-spacing: $ls-tight;
+  margin-top: $s-4;
+}
+.pstep__b { margin-top: $s-3; color: $c-text-soft; font-size: $fs-sm; line-height: 1.5; }
+
+/* Абзац после шагов — с воздухом, иначе прилипает к телам шагов. */
+.psteps + .prose { margin-top: $s-10; }
+
+
+/* --- Фигура (крупное фото внутри секции) ---------------------------------- */
+.pfig { margin: $s-10 0 0; }
+.pfig img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid $c-line;
+}
+
+
+/* --- Полоса цифр ----------------------------------------------------------- */
+.pstats-wrap { padding-block: $s-12 $s-16; }
+.pstats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid $c-line-strong;
+  border-bottom: 1px solid $c-line;
+}
+.pstat {
+  padding: $s-8 $s-6 $s-8 $s-6;
+  border-left: 1px solid $c-line;
+}
+.pstat:first-child { border-left: 0; padding-left: 0; }
+.pstat__n {
+  font-family: $f-display;
+  font-weight: 700;
+  font-size: clamp(1.625rem, 1.1rem + 2vw, 2.5rem);
+  line-height: 1;
+  letter-spacing: $ls-tight;
+}
+.pstat__l {
+  display: block;
+  margin-top: $s-3;
+  font-size: $fs-sm;
+  color: $c-text-muted;
+  max-width: 20ch;
+}
+
+
+/* --- Список отличий — волосяные строки, без нумерации (это не последовательность) */
+.pfeatures { list-style: none; margin: $s-10 0 0; padding: 0; }
+.pfeat {
+  padding-block: $s-6;
+  border-top: 1px solid $c-line;
+  color: $c-text;
+  font-size: clamp(1.0625rem, 1rem + 0.45vw, 1.3125rem);
+  line-height: 1.35;
+  max-width: 46ch;
+}
+.pfeat:last-child { border-bottom: 1px solid $c-line; }
+.pfeat b { font-weight: 600; }
+
+
+/* --- Локации --------------------------------------------------------------- */
+.plocs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $s-8;
+  margin-top: $s-10;
+}
+.ploc { border-top: 1px solid $c-line; padding-top: $s-5; }
+.ploc__city {
+  font-family: $f-display;
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: $ls-tight;
+}
+.ploc__addr { margin-top: $s-2; font-size: $fs-sm; color: $c-text-muted; }
+
+
+/* --- Сеть локаций — галерея карточек ----------------------------------------
+   Пять локаций равным весом, у каждой своё фото (реальное или плейсхолдер до
+   замены). Заголовок «Coast to coast», ниже — сетка карточек. Downward exhale. */
+.netgrid { margin-top: $s-16; }
+.netgrid__head { margin-bottom: $s-10; }
+.netblock__head {
+  margin-top: $s-4;
+  font-family: $f-display;
+  font-weight: 700;
+  font-size: clamp(2.25rem, 1.5rem + 2.6vw, 3.25rem);
+  line-height: 1;
+  letter-spacing: $ls-tight;
+}
+.netblock__accent {
+  font-family: $f-accent;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.06em;
+  letter-spacing: -0.01em;
+}
+
+.loccards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $s-10 $s-6;
+}
+.loccard__media {
+  margin: 0;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border: 1px solid $c-line;
+  background: $c-surface;
+}
+.loccard__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Плейсхолдер до реального фото — аккуратная панель, не «сломанная картинка». */
+.loccard__ph {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: $s-3;
+  background:
+    repeating-linear-gradient(-45deg, transparent 0 11px, rgba(255,255,255,0.014) 11px 12px),
+    linear-gradient(160deg, $c-surface, $c-surface-2);
+  color: $c-text-muted;
+}
+.loccard__ph svg { width: 22px; height: 22px; opacity: 0.75; }
+.loccard__ph > span {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: $ls-mono;
+  text-transform: uppercase;
+}
+
+.loccard__city {
+  margin-top: $s-5;
+  font-family: $f-display;
+  font-weight: 700;
+  font-size: 1.1875rem;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+.loccard__city span {
+  margin-left: 7px;
+  font-family: $f-mono;
+  font-weight: 500;
+  font-size: 0.58em;
+  letter-spacing: $ls-mono;
+  color: $c-text-muted;
+  vertical-align: 0.18em;
+}
+.loccard__addr { margin-top: $s-2; font-size: $fs-sm; color: $c-text-soft; max-width: 30ch; }
+.loccard__phone {
+  display: inline-block;
+  margin-top: $s-3;
+  font-family: $f-mono;
+  font-size: $fs-sm;
+  letter-spacing: 0.03em;
+  color: $c-text;
+  transition: color $t-fast $e-out;
+}
+a.loccard__phone:hover { color: $c-brand-hover; }
+.loccard__badge {
+  display: inline-block;
+  margin-top: $s-3;
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: $ls-mono;
+  text-transform: uppercase;
+  color: $c-text-muted;
+}
+
+@media (max-width: 900px) { .loccards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .loccards { grid-template-columns: 1fr; } }
+
+
+/* --- Основатель: мелкие метрики под именем -------------------------------- */
+.pmeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $s-6;
+  margin-top: $s-6;
+  padding-top: $s-6;
+  border-top: 1px solid $c-line;
+}
+.pmeta__n {
+  font-family: $f-display;
+  font-weight: 700;
+  font-size: 1.375rem;
+  letter-spacing: $ls-tight;
+}
+.pmeta__l {
+  display: block;
+  margin-top: $s-2;
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: $ls-mono;
+  text-transform: uppercase;
+  color: $c-text-muted;
+}
+
+
+/* --- Финальный призыв ------------------------------------------------------ */
+.pcta { position: relative; padding-block: $s-20 $s-24; border-top: 1px solid $c-line; }
+.pcta__inner { position: relative; z-index: 1; }
+.pcta h2 { font-size: clamp(2rem, 1.35rem + 3.2vw, 3.75rem); line-height: 1; }
+.pcta__row {
+  display: flex;
+  align-items: center;
+  gap: $s-8;
+  margin-top: $s-10;
+  flex-wrap: wrap;
+}
+.pcta__phone {
+  font-family: $f-mono;
+  letter-spacing: 0.06em;
+  color: $c-text-soft;
+  transition: color $t-base $e-out;
+}
+.pcta__phone:hover { color: $c-text; }
+
+
+/* --- Фотографии с живого сайта -------------------------------------------- */
+
+/* Панорама-баннер во всю ширину (luxury-cars.jpg — 1920×320). */
+.pbanner { margin: 0; }
+.pbanner img {
+  width: 100%;
+  height: clamp(140px, 22vw, 320px);
+  object-fit: cover;
+  display: block;
+}
+
+/* Фото локации (ohio / beverly-hills, 16:9) над названием. */
+.ploc__media { display: block; margin-bottom: $s-4; }
+.ploc__media img {
+  width: 100%;
+  height: clamp(180px, 20vw, 240px);
+  object-fit: cover;
+  display: block;
+}
+
+/* Портрет основателя (366×430) — крупный, в тонкой рамке, во всю колонку. */
+.pfounder__photo { margin: $s-5 0; }
+.pfounder__photo img {
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  display: block;
+  border: 1px solid $c-line-strong;
+}
+
+
+/* ==========================================================================
+   Адаптив
+   ========================================================================== */
+@media (max-width: 900px) {
+  .prow { grid-template-columns: 1fr; gap: $s-6; }
+  .prow__head { font-size: clamp(1.625rem, 1.2rem + 3vw, 2.25rem); }
+
+  .phero__split { grid-template-columns: 1fr; }
+  .phero--split .phero__inner { max-width: none; }
+  .psteps { grid-template-columns: 1fr; gap: $s-6; }
+}
+
+@media (max-width: 760px) {
+  .pstats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pstat { padding: $s-6 $s-5; }
+  .pstat:first-child { padding-left: $s-5; border-left: 1px solid $c-line; }
+  .pstat:nth-child(1), .pstat:nth-child(2) { border-top: 0; }
+  .pstat:nth-child(odd) { border-left: 0; padding-left: 0; }
+  .plocs { grid-template-columns: 1fr; }
+}
+
+
+/* ===== Светлая секция — оверрайды компонентов (AAN-способ, без CSS-vars) ===== */
+$lt: #14171C; $lm: #565C63; $lb: rgba(20,23,28,.12); $lb2: rgba(20,23,28,.30);
+.aan-section--light{
+  background: $bg-invert; color: $lt;
+  h1,h2,h3,h4,h5,h6,.display{ color:$lt; }
+  p,.lead,.prose--lead{ color:$lt; }
+  .eyebrow{ color:$lm; }
+  .prose{ color:#3C4148; }
+  .prose strong, .pfeat b{ color:$lt; }
+  .prow__head,.pstep__t,.pmeta__n,.netblock__head{ color:$lt; }
+  .pfeat{ color:$lt; border-color:$lb; }
+  .pfeat:last-child{ border-color:$lb; }
+  .prole,.pstep__b,.pmeta__l,.pstat__l{ color:$lm; }
+  .pstep__n{ color:$lm; }
+  .pstep{ border-color:$lb2; }
+  .pstats,.pstat{ border-color:$lb; }
+  .pmeta{ border-color:$lb; }
+  .plocs .ploc,.loccard__media,.aboutloc,.netloc{ border-color:$lb; }
+  .pfounder__photo img,.loccard__media{ border-color:$lb2; }
+  .pcta__phone{ color:#3C4148; }
+  .gridlines span{ border-color: rgba(20,23,28,.09); }
+  .btn-3{ color:$lt; border-color:$lb2; }
+  .btn-3:hover{ background: rgba(20,23,28,.06); border-color:$lt; }
+}
+
+/* Мобильное меню (бургер) */
+@media (max-width: 860px){
+  .header.nav-open .header__nav{ display:flex; flex-direction:column; align-items:flex-start; gap:$s-5;
+    position:absolute; top:100%; left:0; right:0; background:$surface-dark; padding:$s-6 $gutter; border-top:1px solid $c-line; }
+}
+
+/* ===== ID-оверрайды базы кита (шапка/подвал светлые по умолчанию) ===== */
+#header{ background: transparent; border-bottom: 1px solid transparent; box-shadow: none; }
+#header.is-stuck{ background: $c-void; border-bottom-color: $c-line; }
+#footer{ background: $c-void; color: $c-text; }
