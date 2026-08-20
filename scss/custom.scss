@@ -201,6 +201,7 @@ h1 em, h2 em, .display em {
 .btn-1 svg, .btn-4 svg { margin-left: sp(3); transition: transform .25s cubic-bezier(.16,1,.3,1); }
 .btn-1:hover svg, .btn-4:hover svg { transform: translateX(5px); }
 .btn-3 { justify-content: center; }
+.btn-block{ width:100%; }
 
 // ── Section rhythm — dark rows + iBuy LIGHT section (warm bone) ──────────────
 .aan-section        { padding: sp(9) 0; background: $bg-row; position: relative; }
@@ -1561,3 +1562,3301 @@ $lt: #14171C; $lm: #565C63; $lb: rgba(20,23,28,.12); $lb2: rgba(20,23,28,.30);
 #header{ background: transparent; border-bottom: 1px solid transparent; box-shadow: none; }
 #header.is-stuck{ background: $c-void; border-bottom-color: $c-line; }
 #footer{ background: $c-void; color: $c-text; }
+
+/* ================= СЕКЦИИ ГЛАВНОЙ ================= */
+
+/* Runtime canvas colours read by network.js — NOT dealer theming. */
+:root{ --map-dot: rgba(255,255,255,.34); --map-halo: rgba(255,255,255,.08); --section-glow: rgba(255,255,255,.045); --grid-line: rgba(255,255,255,.055); }
+
+
+/* ===== hero.css ===== */
+/* ==========================================================================
+   SECTION 01 — HERO  (v2)
+
+   Язык взят из референсов Alex, а не из дефолта:
+   · данные вписаны в перспективу кадра, с выносными линиями (elemets, MAP)
+   · нумерация глав + гигантская призрачная цифра (1home / Range Rover Velar)
+   · волосяная колоночная сетка и засечки по углам (RENON)
+   · конденсированные капсы (ELECTRA)
+   · моно-телеметрия
+
+   Чего здесь принципиально НЕТ: скруглений, backdrop-blur, карточек,
+   свечения под кнопкой, полосы «As seen in».
+   ========================================================================== */
+
+/* --- Шапка ---------------------------------------------------------------- */
+
+.header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: $z-header;
+  height: $header-h;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid transparent;
+  transition: background $t-base $e-out,
+              border-color $t-base $e-out,
+              height $t-mid $e-out;
+}
+
+
+/* Логотип ужимается вместе с шапкой. Кривая та же, что у высоты, — иначе
+   логотип и шапка приезжают в разное время, и это видно. */
+.header__logo img {
+  height: $logo-h;
+  width: auto;
+  transition: height $t-mid $e-out;
+}
+
+
+/* Пункты меню — моно-капсы с разрядкой. Не «ссылки на сайте», а подписи на
+   приборе. Крупнее и ярче обычного моно-лейбла: это навигация, её должно быть
+   видно, а не угадывать. */
+.header__link {
+  position: relative;
+  padding: $s-2 0;
+  font-family: $f-mono;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $c-text;
+  transition: color $t-fast $e-out;
+}
+
+
+
+/* --- Каркас --------------------------------------------------------------- */
+
+.hero {
+  position: relative;
+  min-height: 92svh;
+  display: flex;
+  flex-direction: column;
+  padding-top: $header-h;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+
+/* Медиа. Сразу <video> — клиент просил кинематографичный видео-герой, съёмка
+   будет через несколько недель. Пока источника нет, браузер показывает poster,
+   и это ровно тот же кадр. Менять разметку потом не придётся. */
+/* Маска на САМОМ кадре, а не только скрим поверх него. Скрим гасил фото
+   затемнением — но к линии обрыва оставалось несколько процентов яркости, и
+   они срезались ножом: тонкая, но абсолютно чёткая горизонталь.
+
+   Маска убирает не яркость, а сам пиксель: к нижнему краю кадра его уже нет,
+   обрываться нечему. Резкий переход становится невозможен по построению —
+   при любой высоте кадра и любом макете. */
+.hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 74%, rgba(0, 0, 0, 0.45) 90%, transparent 100%);
+          mask-image: linear-gradient(to bottom, #000 0%, #000 74%, rgba(0, 0, 0, 0.45) 90%, transparent 100%);
+}
+
+
+.hero__media video,
+.hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 68%;
+}
+
+
+/* Скрим — только под текстом слева. Кадр справа должен дышать. */
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    linear-gradient(100deg,
+      rgba(8, 9, 11, 0.93) 0%,
+      rgba(8, 9, 11, 0.76) 24%,
+      rgba(8, 9, 11, 0.34) 46%,
+      rgba(8, 9, 11, 0.04) 66%,
+      rgba(8, 9, 11, 0.00) 100%),
+    /* Низ кадра. Раньше ступень тут была видна: фото гасло за 9% высоты (≈70px)
+       и упиралось в границу секции ещё живым. Растворитель длинный — фото
+       уходит в цвет секции постепенно, и стык перестаёт существовать.
+       Цвет тот же, что у .network (--c-bg), поэтому шва нет вовсе. */
+    linear-gradient(to top,
+      $c-bg 0%,
+      $c-bg 5%,
+      rgba(11, 13, 16, 0.94) 11%,
+      rgba(11, 13, 16, 0.70) 19%,
+      rgba(11, 13, 16, 0.34) 30%,
+      transparent 46%),
+    linear-gradient(to bottom,
+      rgba(8, 9, 11, 0.62) 0%,
+      transparent 18%);
+}
+
+
+/* Колоночная сетка поверх кадра — конструкция, а не декор. Продолжается во всех
+   секциях ниже (.gridlines в base.css), поэтому цвет берётся из общего токена. */
+.hero__grid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  max-width: $container;
+  margin-inline: auto;
+  padding-inline: $gutter;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+
+.hero__grid span {
+  border-left: 1px solid $grid-line;
+}
+
+.hero__grid span:last-child {
+  border-right: 1px solid $grid-line;
+}
+
+
+/* --- Земля -----------------------------------------------------------------
+   Типографика лежит на бетоне в перспективе. Ключ — rotateX: буквы не «поверх
+   фото», а на его плоскости. Ровно приём elemets.jpg и MAP.jpg.
+
+   Вырез машин для этого не нужен: земля и так перед ними.
+
+   Координаты подобраны под кадр hero-lineup.jpg — площадка перед линейкой.
+   Сменится кадр или придёт видео — правится здесь, больше нигде. */
+
+/* Плоскость садится на открытый бетон перед машинами: левее — колонка
+   заголовка, правее — панель формы, ниже — прибор и лента. */
+.hero__ground {
+  position: absolute;
+  left: 31%;   /* правее абзаца в левой колонке */
+  right: 31%;  /* левее панели формы */
+  bottom: 20%; /* выше прибора и ленты */
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;   /* длинная строка не должна выехать под форму */
+  perspective: 520px;
+  perspective-origin: 50% 0%;
+
+  /* Молчит, пока нечего показать. Проступает на бетоне только под цифру. */
+  opacity: 0;
+  transition: opacity $t-base $e-out;
+}
+
+
+.hero__ground.is-live { opacity: 1; }
+
+
+.ground__plane {
+  transform: rotateX(64deg);
+  transform-origin: 50% 0%;
+  text-align: center;
+  /* Дальний край растворяется — плоскость уходит вдаль, а не обрывается. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 76%, transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 76%, transparent 100%);
+}
+
+
+/* Смена надписи на земле — не подмена текста, а перезапись: старое уплывает
+   вглубь площадки, новое выступает из неё. JS вешает .is-swapping на время
+   подмены (см. main.js → writeGround). */
+.ground__line,
+.ground__figure,
+.ground__line--sub {
+  transition: opacity $t-base $e-out,
+              transform $t-mid $e-expo;
+}
+
+
+.hero__ground.is-swapping .ground__line,
+.hero__ground.is-swapping .ground__figure,
+.hero__ground.is-swapping .ground__line--sub {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+
+.ground__line {
+  font-family: $f-mono;
+  font-size: 0.8125rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.60);
+  margin-bottom: $s-3;
+  white-space: nowrap;
+}
+
+
+.ground__line--sub {
+  margin: $s-3 0 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
+  color: rgba(255, 255, 255, 0.40);
+}
+
+
+/* Главная цифра. Она и лежит на бетоне перед машинами. */
+.ground__figure {
+  font-family: $f-display;
+  font-size: clamp(1.75rem, 2.7vw, 3.25rem);
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  /* Не белый: буквы нанесены НА бетон, а не светятся над ним. */
+  color: rgba(255, 255, 255, 0.82);
+  white-space: nowrap;
+  transition: opacity $t-fast $e-out;
+}
+
+
+/* Пока прибор считает — цифра на земле дышит, как живые показания. */
+.hero__ground.is-working .ground__figure { opacity: 0.45; }
+
+
+
+/* z-index выше меток: подпись к машине не имеет права наехать на форму. */
+.hero__inner {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+  /* align-content: center — центрирует по вертикали ВЕСЬ блок (текст + форма
+     как одно целое) в свободном поле под шапкой.
+
+     align-items: stretch — тянет обе колонки на высоту строки, а её задаёт
+     самый высокий элемент (форма). Благодаря этому верх текста совпадает с
+     верхом формы, а низ левой колонки — с низом формы. На этом и держится
+     выравнивание trust bar по нижней линии формы: он просто прижат к низу
+     своей колонки (margin-top: auto), и подгонять отступы не нужно —
+     сменится высота формы, логотипы уедут за ней сами. */
+  align-content: center;
+  align-items: stretch;
+  gap: $s-16;
+  flex: 1;
+  padding-block: $s-8;
+}
+
+
+
+/* --- Левая колонка --------------------------------------------------------- */
+
+/* Ширину задаёт колонка сетки, а не max-width: конденсированный Antonio
+   при жёстком ограничении рассыпается по слову на строку.
+
+   Колонка — flex-столбец: текст сверху, trust bar прижат к низу (margin-top:
+   auto). Колонка растянута до высоты формы, поэтому логотипы садятся ровно
+   на её нижнюю линию. */
+.hero__copy {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* Метка главы: 01 — красная засечка — подпись. */
+.hero__chapter {
+  display: flex;
+  align-items: center;
+  gap: $s-3;
+  margin-bottom: $s-6;
+}
+
+
+.hero__chapter b {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  font-weight: 500;
+  letter-spacing: $ls-mono;
+  color: $c-text;
+}
+
+
+.hero__chapter i {
+  width: 24px;
+  height: 1px;
+  background: $c-brand;
+  flex: none;
+}
+
+
+.hero__title {
+  font-family: $f-display;
+  font-size: $fs-display;
+  font-weight: 700;
+  line-height: 0.88;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  text-wrap: initial;
+  margin-bottom: $s-6;
+}
+
+
+/* «Luxury & Exotic» набирается контрастной антиквой — правило одно на все
+   секции и живёт в base.css. Здесь только цвет: чуть тише белого, чтобы строка
+   не спорила с двумя капсовыми. */
+.hero__title em { color: rgba(255, 255, 255, 0.94); }
+
+
+.hero__lead {
+  font-size: $fs-body;
+  line-height: 1.55;
+  color: $c-text-soft;
+  max-width: 40ch;
+  margin-bottom: $s-8;
+}
+
+
+.hero__lead strong {
+  color: $c-text;
+  font-weight: 600;
+}
+
+
+
+/* --- Trust bar -------------------------------------------------------------
+   Логотипы взяты с живого сайта клиента и перекрашены в белый: исходники
+   чёрные (рисовались под светлый фон) и на тёмном кадре были бы не видны.
+
+   Приглушены до 55%: это подпорка доверия, а не витрина чужих брендов.
+   Оживают под курсором — тогда становится понятно, что они кликабельны
+   (ссылки на публикации подставит клиент). */
+
+.trust {
+  display: flex;
+  align-items: center;
+  gap: $s-8;
+  flex-wrap: wrap;
+  /* Прижимает полосу к низу левой колонки — а её низ совпадает с низом формы. */
+  margin-top: auto;
+  padding-top: $s-10;
+}
+
+
+.trust__label {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: $ls-mono;
+  text-transform: uppercase;
+  color: $c-text-dim;
+  white-space: nowrap;
+}
+
+
+.trust__list {
+  display: flex;
+  align-items: center;
+  gap: clamp($s-6, 3vw, $s-12);
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+
+/* Монохром. Логотипы приходят в своих цветах — фиолетовый Roku, красный
+   CarBuzz, зелёный Trustpilot. В полосе доверия это радуга, которая дерётся
+   с нашим единственным акцентом. brightness(0) гасит любой цвет в чёрный,
+   invert(1) поднимает его в чистый белый — работает с любым логотипом,
+   не трогая сами файлы. */
+.trust__logo {
+  width: auto;
+  filter: brightness(0) invert(1);
+  opacity: 0.5;
+  transition: opacity $t-base $e-out;
+}
+
+
+/* Высоты — поштучно, по ОПТИЧЕСКОМУ весу, а не по одной линейке.
+   Fox и stl свёрстаны в две строки: при равной высоте они выглядят мелкими
+   рядом со словесными знаками, а те — громоздкими. Выравниваем на глаз,
+   а не по числу. */
+.trust__logo--fox   { height: 44px; }
+
+.trust__logo--stl   { height: 46px; }
+
+.trust__logo--roku  { height: 28px; }
+
+.trust__logo--buzz  { height: 23px; }
+
+.trust__logo--trust { height: 29px; }
+
+
+.trust__list li:hover .trust__logo { opacity: 1; }
+
+
+/* Сеть Marshall Goldman — требование клиента №3. Тонкой строкой, как
+   выходные данные, а не как «ещё один блок». */
+.hero__network {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $c-text-dim;
+  margin-bottom: $s-5;
+}
+
+
+.hero__network span {
+  display: block;
+  margin-top: $s-2;
+  color: $c-text-soft;
+}
+
+
+
+/* --- Приборный блок --------------------------------------------------------
+   Один слот, два состояния. По умолчанию общие цифры; при наведении на машину
+   в ленте внизу — телеметрия этой машины. Панели лежат друг на друге в гриде,
+   поэтому переключение не дёргает раскладку. */
+
+.readout {
+  display: grid;
+  align-items: end;
+  min-height: 76px;
+}
+
+
+/* Кросс-фейд, а не подмена. Уходящая панель поднимается и тает, приходящая
+   всплывает снизу с небольшой задержкой — они не сталкиваются в кадре. */
+.readout__pane {
+  grid-area: 1 / 1;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: opacity $t-base $e-out,
+              transform $t-mid $e-expo,
+              visibility 0s linear $t-mid;
+}
+
+
+.readout__pane.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  /* Задержка 70ms — уходящая панель успевает убраться, и глаз не ловит наложение. */
+  transition: opacity $t-base $e-out 70ms,
+              transform $t-slow $e-expo 70ms,
+              visibility 0s;
+}
+
+
+/* Состояние по умолчанию — «5.7 s | 250 km/h» из Velar. */
+.readout__stats {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+}
+
+
+.readout__stats li {
+  padding-right: $s-5;
+  margin-right: $s-5;
+  border-right: 1px solid $c-line;
+}
+
+.readout__stats li:last-child { border-right: 0; margin-right: 0; }
+
+
+.readout__stats b {
+  display: block;
+  font-family: $f-display;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+
+.readout__stats span {
+  display: block;
+  margin-top: $s-2;
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $c-text-dim;
+}
+
+
+/* Состояние «машина» */
+.readout__name {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $c-text;
+  margin-bottom: $s-3;
+}
+
+
+.readout__grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+}
+
+
+.readout__grid > div {
+  padding-right: $s-5;
+  margin-right: $s-5;
+  border-right: 1px solid $c-line;
+}
+
+.readout__grid > div:last-child { border-right: 0; margin-right: 0; }
+
+
+.readout__grid dt {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $c-text-dim;
+  margin-bottom: $s-2;
+}
+
+
+.readout__grid dd {
+  margin: 0;
+  font-family: $f-display;
+  font-size: 1.375rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+
+/* Сумма — единственная цифра, ради которой всё затевалось. */
+.readout__grid dd[data-slot='paid'] { color: $c-brand; }
+
+
+
+/* --- Живая оценка ----------------------------------------------------------
+   Главное состояние прибора. Считается, пока человек набирает форму:
+   сайт обещает «no lowballing» — здесь он это обещание выполняет на глазах. */
+
+.readout__status {
+  font-weight: 500;
+  color: $c-brand;
+  letter-spacing: 0.1em;
+}
+
+
+/* Мигает, пока идёт счёт. */
+.readout__status.is-working {
+  animation: blink 900ms steps(2, end) infinite;
+}
+
+
+@keyframes blink { 50% { opacity: 0.25; } }
+
+
+@media (prefers-reduced-motion: reduce) {
+  .readout__status.is-working { animation: none; }
+}
+
+
+/* Сумму на широком экране несёт ЗЕМЛЯ — здесь она была бы вторым экземпляром
+   той же цифры на одном экране. Показываем её тут только там, где земли нет
+   (узкие экраны, см. медиазапрос ниже). */
+.readout__figure {
+  display: none;
+  font-family: $f-display;
+  font-size: clamp(2rem, 1.2rem + 2.2vw, 3rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  /* Табличные цифры: при прокрутке разряды не должны прыгать по ширине. */
+  font-variant-numeric: tabular-nums;
+  margin-bottom: $s-2;
+}
+
+
+/* Доказательство. Всплывает ровно там, где у человека сомнение «занизят». */
+.readout__compare {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $c-text-muted;
+  min-height: 1rem;
+}
+
+
+.readout__compare b {
+  color: $c-text;
+  font-weight: 500;
+}
+
+
+
+/* --- Выносные линии к машинам ----------------------------------------------
+   Главный приём из elemets.jpg / MAP.jpg: подпись не лежит поверх кадра,
+   а привязана тонкой линией к объекту в нём. Точка — на машине, линия — вверх,
+   подпись — на конце. Живёт только на широком экране, где кадр не обрезан. */
+
+.hero__tags {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  display: none;
+}
+
+
+.tag {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+
+/* Точка на машине */
+.tag::after {
+  content: '';
+  position: absolute;
+  left: -3px;
+  bottom: -3px;
+  width: 6px;
+  height: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+
+/* Выносная линия вверх от точки */
+.tag__line {
+  width: 1px;
+  height: var(--tag-h, 54px);
+  background: linear-gradient(to bottom,
+    rgba(255, 255, 255, 0.55),
+    rgba(255, 255, 255, 0.15));
+  order: 2;
+}
+
+
+.tag__label {
+  order: 1;
+  padding-bottom: $s-2;
+  transform: translateX(-2px);
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.92);
+  white-space: nowrap;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.85);
+}
+
+
+.tag__label small {
+  display: block;
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+
+/* Позиции подобраны по кадру hero-lineup.jpg. Сменится фото/видео —
+   пересчитать здесь, больше нигде.
+   Держимся левее панели формы (она начинается примерно с 66%): подпись,
+   заезжающая под панель, — это мусор, а не приём. Две метки, не три:
+   третья упиралась в форму, а сдержанность тут читается как вкус. */
+.tag--a { left: 35%; bottom: 33%; --tag-h: 52px; }
+   /* Ferrari 812 */
+.tag--b { left: 49%; bottom: 36%; --tag-h: 74px; }
+   /* Lamborghini Revuelto */
+
+@media (min-width: 1200px) {
+  .hero__tags { display: block; }
+}
+
+
+
+/* --- Правая колонка: форма-прибор ------------------------------------------
+   Не карточка. Панель: прямые углы, волосяная рамка, плотный фон,
+   никакого блюра. Засечки по углам — из RENON. */
+
+/* Белая панель на тёмном кадре. Она обязана «выстреливать»: это единственное
+   место сделки на экране. Тёмная плашка на тёмном фото растворялась.
+   Тень — не декор, а то, что отрывает панель от фотографии. */
+/* СВЕТЛОЕ матовое стекло, а не тёмная карточка с блюром.
+   Тёмная полупрозрачная плашка со скруглениями — самый узнаваемый след
+   нейросети, и мы её уже один раз выбросили. Здесь стекло работает иначе:
+   панель остаётся белой и продолжает выстреливать с тёмного кадра, но
+   фотография слегка проступает сквозь неё — как через матовое архитектурное
+   стекло. Углы прямые, свечения нет.
+
+   0.88, а не 0.7: ниже этого белый перестаёт держать контраст, и панель
+   снова начинает тонуть в фото — ровно то, от чего мы уходили. */
+.quote {
+  position: relative;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(28px) saturate(1.2);
+  -webkit-backdrop-filter: blur(28px) saturate(1.2);
+  color: $c-panel-ink;
+  border: 0;
+  border-radius: 0;
+  /* Компактнее: панель — прибор, а не просторная карточка. */
+  padding: $s-6 $s-5 $s-5;
+  box-shadow: 0 40px 90px -24px rgba(0, 0, 0, 0.85),
+              0 8px 24px -8px rgba(0, 0, 0, 0.5);
+}
+
+
+/* Если браузер не умеет backdrop-filter — панель обязана остаться
+   непрозрачной, иначе текст ляжет прямо на фотографию. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .quote { background: $c-panel; }
+}
+
+
+/* Красная засечка по углам — единственный акцент, оставшийся от тёмной версии. */
+.quote::before,
+.quote::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 1px solid $c-brand;
+}
+
+.quote::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+
+.quote::after  { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+
+
+.quote__head {
+  padding-bottom: $s-3;
+  border-bottom: 1px solid $c-panel-line;
+  margin-bottom: $s-5;
+}
+
+
+.quote__title {
+  font-family: $f-display;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: $c-panel-ink;
+}
+
+
+
+/* --- Поля внутри белой панели ----------------------------------------------
+   Базовые .field рассчитаны на тёмный фон: белый текст, светлые линейки.
+   На белом они бы просто исчезли. Перекрашиваем в пределах .quote. */
+
+.quote .field__label { color: $c-panel-muted; }
+
+.quote .field__optional { color: $c-panel-dim; }
+
+
+/* Настоящие поля ввода, а не подчёркнутые линейки.
+   Линейка выглядела приборно, но глазом не читалась как место, куда пишут:
+   у неё нет ни границы, ни «дна». Заливка + рамка возвращают полю понятную
+   форму — человек видит коробку и понимает, что в неё вводят.
+
+   Радиус 2px, а не 8-10: скругления — то, по чему макет опознаётся как
+   сгенерированный, но абсолютно острый угол на поле ввода выглядит грубо.
+   Два пикселя снимают резкость, не превращая поле в «пилюлю». */
+.quote .field__input {
+  height: $ctl-h;
+  padding: 0 $s-4;
+  background: #F1F3F5;
+  border: 1px solid #D7DBDF;
+  border-bottom: 1px solid #D7DBDF;
+  border-radius: 2px;
+  color: $c-panel-ink;
+}
+
+
+.quote .field__input::placeholder { color: $c-panel-dim; }
+
+
+.quote .field__input:hover {
+  background: #EAEDF0;
+  border-color: #B9BFC5;
+}
+
+
+/* В фокусе поле белеет — оно «открылось». Рамка темнеет, вокруг мягкий ореол:
+   он заменяет системный фокус-ринг, который на светлой панели смотрелся бы
+   инородно. */
+.quote .field__input:focus {
+  background: #FFFFFF;
+  border-color: $c-panel-ink;
+  box-shadow: 0 0 0 3px rgba(20, 23, 28, 0.10);
+}
+
+
+.quote .field__input[aria-invalid='true'] {
+  border-color: $c-brand;
+  background: rgba(222, 25, 42, 0.04);
+  box-shadow: none;
+}
+
+
+.quote .field__input[aria-invalid='true']:focus {
+  box-shadow: 0 0 0 3px $c-brand-glow;
+}
+
+
+.quote .field__error { color: $c-brand-press; }
+
+
+.quote__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $s-3 $s-5;
+  margin-bottom: $s-5;
+}
+
+
+.quote__grid .field--full { grid-column: 1 / -1; }
+
+
+
+
+/* --- Телеметрия сети -------------------------------------------------------
+   Требование клиента №3: сеть Marshall Goldman и пять локаций. Ставим прямо
+   в герой отдельной полосой — как приборная строка, а не как «ещё один блок». */
+
+/* Полоса под прибор и ленту. Сейчас они закомментированы в разметке, но стили
+   остаются: раскомментируют — заработает без правок. */
+.hero__rail {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: $s-8;
+  padding-bottom: $s-4;
+}
+
+
+.instrument {
+  display: flex;
+  flex-direction: column;
+  gap: $s-2;
+  flex: 1;
+  min-width: 0;
+}
+
+
+/* --- Живая линейка ---------------------------------------------------------
+   Наведение или фокус на машине перещёлкивает приборный блок слева.
+   Кнопки, а не div: работает с клавиатуры и с тача, читается скринридером. */
+
+.lineup {
+  display: flex;
+  align-items: center;
+  gap: $s-6;
+  flex-wrap: wrap;
+  border-top: 1px solid $c-line-strong;
+}
+
+
+.lineup__label {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: $ls-mono;
+  text-transform: uppercase;
+  color: $c-text-dim;
+  white-space: nowrap;
+}
+
+
+.lineup__list {
+  display: flex;
+  align-items: center;
+  gap: $s-5;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+}
+
+
+/* Засечка сверху — деление на шкале. Активная краснеет. */
+.lineup__item {
+  position: relative;
+  /* 44px — палец. Текст прижат к низу, засечка остаётся наверху. */
+  display: inline-flex;
+  align-items: flex-end;
+  min-height: 44px;
+  padding: $s-3 0 $s-2;
+  background: none;
+  border: 0;
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $c-text-muted;
+  white-space: nowrap;
+  transition: color $t-base $e-out,
+              transform $t-mid $e-expo;
+}
+
+
+/* Засечка вырастает и краснеет — но не прыжком: expo-кривая сажает её мягко. */
+.lineup__item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 6px;
+  background: $c-line-strong;
+  transition: height $t-mid $e-expo,
+              background $t-base $e-out;
+}
+
+
+.lineup__item:hover,
+.lineup__item:focus-visible,
+.lineup__item.is-active {
+  color: $c-text;
+  /* Микросдвиг вверх: элемент «поднимается» под курсор, а не просто белеет. */
+  transform: translateY(-2px);
+}
+
+
+.lineup__item:hover::before,
+.lineup__item:focus-visible::before,
+.lineup__item.is-active::before {
+  height: 14px;
+  background: $c-brand;
+}
+
+
+/* --- Появление -------------------------------------------------------------
+   Своей анимации у героя больше нет. Он ездит на общем [data-rise] из base.css:
+   на сайте не должно быть двух разных механик появления — одна на загрузке,
+   другая на скролле. Герой просто оказывается в кадре сразу, поэтому его
+   лесенка играет на загрузке. */
+
+
+/* --- Заглушка следующей секции (удалить, когда сделаем Section 02) --------- */
+
+.next-stub {
+  min-height: 42svh;
+  display: flex;
+  align-items: center;
+  background: $c-bg;
+  border-top: 1px solid $c-line;
+}
+
+
+
+/* ==========================================================================
+   Адаптив
+   ========================================================================== */
+
+/* ==========================================================================
+   НИЗКИЕ ЭКРАНЫ
+
+   Герой обязан помещаться целиком, а не обрезаться. Ширина тут ни при чём —
+   виновата ВЫСОТА: на 1180×560 форма уходила на 46px за нижний край, и кнопка
+   «Get my offer» — главное действие страницы — оказывалась за фолдом.
+
+   Поэтому запросы по height, а не по width. Жмём то, что дышит: шапку, кегль
+   заголовка, отступы и высоту полей. Ничего не прячем — на маленьком ноутбуке
+   человек должен видеть тот же герой, только плотнее.
+   ========================================================================== */
+
+@media (max-height: 800px) {
+  :root {
+    --header-h:       76px;
+    --header-h-stuck: 58px;
+    --logo-h:         46px;
+    --logo-h-stuck:   34px;
+    --ctl-h:          42px;
+    --fs-display:     clamp(2.25rem, 1rem + 3.2vw, 3.6rem);
+  }
+
+  .hero__inner { padding-block: $s-5; gap: $s-10; }
+  .hero__title { margin-bottom: $s-4; }
+  .hero__lead  { margin-bottom: $s-5; }
+
+  .quote { padding: $s-5 $s-5 $s-4; }
+
+  .trust { padding-top: $s-6; gap: $s-6; }
+  .trust__logo--fox   { height: 34px; }
+  .trust__logo--stl   { height: 36px; }
+  .trust__logo--roku  { height: 22px; }
+  .trust__logo--buzz  { height: 18px; }
+  .trust__logo--trust { height: 23px; }
+}
+
+
+@media (max-height: 660px) {
+  :root {
+    --header-h:       64px;
+    --header-h-stuck: 52px;
+    --logo-h:         38px;
+    --logo-h-stuck:   30px;
+    --ctl-h:          38px;
+    --fs-display:     clamp(1.9rem, 0.9rem + 2.6vw, 2.9rem);
+  }
+
+  .hero__inner { padding-block: $s-4; }
+  .hero__lead  { margin-bottom: $s-4; }
+
+  .quote { padding: $s-4; }
+
+  .trust { padding-top: $s-5; gap: $s-5; }
+  .trust__logo--fox   { height: 26px; }
+  .trust__logo--stl   { height: 28px; }
+  .trust__logo--roku  { height: 17px; }
+  .trust__logo--buzz  { height: 14px; }
+  .trust__logo--trust { height: 18px; }
+}
+
+
+@media (max-width: 1080px) {
+  .hero { min-height: auto; }
+
+  /* Земля живёт перспективой, а перспектива живёт шириной. На узкой колонке
+     наклонённая плоскость превращается в нечитаемую кашу — убираем её,
+     и сумму снова несёт прибор. */
+  .hero__ground { display: none; }
+  .readout__figure { display: block; }
+
+  .hero__inner {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: $s-10;
+    padding-block: $s-10 $s-10;
+  }
+
+  .hero__lead { max-width: 48ch; }
+
+  .quote { max-width: 520px; }
+
+  /* Кадр становится полосой сверху: горизонтальное фото, растянутое на всю
+     высоту стопки, зумится так, что от линейки машин ничего не остаётся. */
+  .hero__media,
+  .hero__scrim {
+    height: 68svh;
+    inset: 0 0 auto 0;
+  }
+
+  .hero__scrim {
+    background: linear-gradient(to bottom,
+      rgba(8, 9, 11, 0.84) 0%,
+      rgba(8, 9, 11, 0.68) 20%,
+      rgba(8, 9, 11, 0.62) 52%,
+      rgba(8, 9, 11, 0.86) 80%,
+      $c-bg 100%);
+  }
+
+  .hero__grid { display: none; }
+}
+
+
+@media (max-width: 860px) {
+  .header__nav { display: none; }
+
+  .header__phone {
+    order: 2;
+    margin-left: auto;
+    padding: $s-2 $s-3;
+  }
+  .header__phone span { display: none; }
+
+  .header__burger { order: 3; display: inline-flex; }
+
+  /* stretch, а не flex-start: при flex-start блок сжимается по контенту,
+     а контент — лента с nowrap. Она распирала прибор шире экрана, и всё
+     лишнее просто срезалось body { overflow-x: hidden }. Тянем на 100%
+     и явно разрешаем сжатие через min-width: 0, иначе overflow-x у ленты
+     не работает — ей нужна определённая ширина. */
+  .hero__rail {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $s-4;
+  }
+
+  .instrument,
+  .lineup {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .lineup { gap: $s-3; }
+
+  /* Лента уезжает в горизонтальный скролл, а не сыпется в пять строк. */
+  .lineup__list {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: $s-5;
+    width: 100%;
+    min-width: 0;
+    padding-bottom: $s-1;
+    scrollbar-width: none;
+  }
+  .lineup__list::-webkit-scrollbar { display: none; }
+}
+
+
+@media (max-width: 560px) {
+  /* Те же два состояния, но теснее: на 390px шапка в 96px съедает четверть
+     экрана. Переопределяем токены — правила высоты и логотипа не трогаем. */
+  :root {
+    --header-h:       72px;
+    --header-h-stuck: 56px;
+    --logo-h:         42px;
+    --logo-h-stuck:   30px;
+  }
+
+  .quote { padding: $s-6 $s-5 $s-5; }
+
+  /* Два поля в ряд на узком экране — тесно. В колонку. */
+  .quote__grid { grid-template-columns: 1fr; }
+
+  /* Во flex три показателя переносились «2 + 1» с висящей линейкой.
+     Сетка держит их в строку.
+     minmax(0, 1fr), а не 1fr: у 1fr минимум — min-content, и длинное
+     «Newport Beach» распирало колонку за край экрана. */
+  .readout__stats,
+  .readout__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .readout__stats li,
+  .readout__grid > div {
+    padding-right: $s-3;
+    margin-right: 0;
+    min-width: 0;
+  }
+
+  .readout__stats b,
+  .readout__grid dd {
+    font-size: 1rem;
+    line-height: 1.15;
+    overflow-wrap: break-word;
+  }
+
+  .readout__stats span,
+  .readout__grid dt { font-size: 0.625rem; letter-spacing: 0.06em; }
+
+  .readout { min-height: 88px; }
+  .readout__name { font-size: 0.625rem; }
+}
+
+/* ===== network.css ===== */
+/* ==========================================================================
+   SECTION 02 — NETWORK
+   Точечная карта США, локации Marshall Goldman, дуги перегона между ними.
+   Язык тот же, что в герое: волосяные линейки, моно-подписи, красный только
+   на активном состоянии. Никаких скруглений и блюра.
+   ========================================================================== */
+
+/* Верхний отступ как у остальных секций — заголовок больше не липнет к границе
+   с героем. Нижний оставлен ужатым: карта всё ещё должна помещаться в один экран
+   ноутбука, иначе низ страны уходит за край. Воздух добавляем сверху, где он
+   ничего не ломает.
+
+   Линейки сверху нет намеренно: фото героя растворяется в этот же цвет, и любая
+   граница тут же выдаёт стык, который мы и убираем. */
+.network {
+  position: relative;
+  padding-block: $s-16 $s-16;
+  background: $c-bg;
+  overflow: hidden;
+}
+
+/* Свет сбоку. Не по центру: центральное свечение читается как виньетка от
+   софтбокса и выдаёт «сделано в CSS». Смещённый источник ведёт себя как свет,
+   падающий на местность откуда-то извне кадра — и держит наклон карты.
+
+   Два слоя: холодный белый слева-сверху даёт объём, тёплый красный справа-снизу
+   подхватывает фирменный цвет и не даёт секции стать серой. Оба на грани
+   видимости — их работа в том, чтобы их не замечали.
+
+   Цвета из токенов: на светлой теме белое свечение было бы невидимым. */
+.network::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* Белое свечение — по центру: оно светит на карту, а не в угол секции.
+     Чуть выше середины (46%), потому что карта висит в верхней половине —
+     ровно 50% увели бы свет под неё.
+
+     Красное осталось сбоку: два источника в центре погасили бы друг друга в
+     сплошную виньетку — ту самую, что читается как «сделано в CSS». */
+  background:
+    radial-gradient(62% 70% at 50% 46%, $section-glow, transparent 70%),
+    radial-gradient(38% 48% at 88% 76%, rgba(222, 25, 42, 0.10), transparent 70%);
+}
+
+
+/* --- Шапка секции ---------------------------------------------------------- */
+
+/* 74ch, а не 62: на 62 абзац разворачивался в пять строк и один этой лишней
+   строкой выталкивал карту за нижний край экрана. Шире — четыре строки. */
+.network__head {
+  position: relative;
+  max-width: 74ch;
+  margin-bottom: $s-4;
+}
+
+.network__title {
+  font-family: $f-display;
+  font-size: $fs-h2;
+  font-weight: 700;
+  line-height: 0.94;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  margin-bottom: $s-6;
+}
+
+/* Тот же приём, что в герое: смысловая часть — контуром, не цветом.
+   currentColor, а не белый: на светлой теме белый контур исчезает. */
+/* Антиква вместо контура — общее правило в base.css. */
+.network__title em { color: rgba(255, 255, 255, 0.94); }
+
+.network__lead {
+  font-size: $fs-lead;
+  line-height: 1.6;
+  color: $c-text-soft;
+}
+
+.network__lead strong {
+  color: $c-text;
+  font-weight: 600;
+}
+
+
+/* --- Раскладка ------------------------------------------------------------- */
+
+.network__body {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
+  gap: $s-16;
+  align-items: start;
+}
+
+
+/* --- Карта ----------------------------------------------------------------- */
+
+/* Наклон делает из схемы местность. Но «2010» в наклонённых картах создаёт не
+   наклон, а то, что вокруг него: выдавленная плита с боковой стенкой, глянцевый
+   градиент, скос, тени, объёмные булавки. Ничего этого здесь нет.
+   Глубину даёт ДЫМКА к горизонту, а не фаска. */
+/* Коробка держит наклонённую плоскость ЦЕЛИКОМ. Наклон сжимает её по высоте,
+   но перспектива при этом РАСШИРЯЕТ ближний край — если не дать запаса,
+   страна обрезается по бокам и снизу.
+
+   perspective 2400px, а не 1500: чем дальше камера, тем слабее раздувается
+   ближний край. Наклон остаётся, а страна перестаёт вылезать за кадр. */
+/* Коробка держит наклонённую плоскость с запасом СНИЗУ: без него южный край
+   страны упирался в подпись под картой, и снизу она выглядела обрезанной.
+   Дуги от этого не страдают — они рисуются в слое с overflow: visible
+   и спокойно уходят выше коробки. */
+.map {
+  position: relative;
+  margin: 0 0 $s-10;
+  aspect-ratio: 1000 / 450;
+  perspective: 2400px;
+  perspective-origin: 50% 45%;
+}
+
+/* 38°. Потолок здесь не вкус, а читаемость: на 50° силуэт США схлопывается
+   в абстрактную сетку, и карта теряет единственное, ради чего она тут.
+
+   БЕЗ scale. Масштабировать плоскость нельзя: вместе с ней съедут в размере
+   подписи городов, а они должны остаться читаемыми. Место карте даём коробкой,
+   а не растяжением. */
+/* Поля по бокам — не декоративный отступ, а ЗАПАС ПОД ПЕРСПЕКТИВУ.
+   Наклон приближает нижний край к камере, и он раздувается примерно на 5%.
+   Без запаса страна обрезается слева и справа. */
+.map__stage {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  top: 50%;
+  aspect-ratio: 1000 / 528;
+  transform: translateY(-50%) rotateX(38deg);
+  transform-origin: 50% 60%;
+  transform-style: preserve-3d;
+
+  /* ДЫМКИ ЗДЕСЬ НЕТ, И ЭТО НАМЕРЕННО.
+
+     Была маска, гасившая дальний край «для глубины». Но точки страны и так
+     нарисованы при 26% непрозрачности, и маска глушила их ещё вдвое: 0.26 x 0.5
+     это ~0.13 — северные штаты растворялись в фоне. Формально страна была на
+     месте, а глазами её там не было. Карта читалась обрезанной.
+
+     Глубину и без того дают наклон и дуги, летящие НАД плоскостью. Верхний край
+     страны — это её настоящая северная граница, а не горизонт, и растворять
+     её незачем. */
+}
+
+/* Точки страны. Canvas, а не SVG: точек 3094, и в DOM они убивают анимацию. */
+.map__dots {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Маркеры и подписи — В наклонённой плоскости. Подписи ложатся на местность,
+   кольца пинга становятся эллипсами: так и выглядит круг на плоскости,
+   уходящей в перспективу. */
+.map__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Слой дуг. НЕ наклонён и лежит поверх: маршрут должен лететь НАД страной,
+   а не быть покрашен на асфальте. */
+.map__air {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* Дуга перегона между локациями (требование клиента №3). */
+.arc {
+  fill: none;
+  stroke: $c-brand;
+  stroke-width: 1.4;
+  opacity: 0.75;
+  vector-effect: non-scaling-stroke;
+}
+
+
+/* --- Маркеры --------------------------------------------------------------- */
+
+.marker__dot {
+  fill: $c-text;
+  transition: fill $t-base $e-out,
+              r $t-mid $e-expo;
+}
+
+.marker__halo {
+  fill: $map-halo;
+  opacity: 0;
+  transition: opacity $t-base $e-out;
+}
+
+
+/* --- Пинг источника --------------------------------------------------------
+   Точка, из которой расходятся дуги, бьёт кольцами — как радар.
+   Живёт ТОЛЬКО на активном маркере: если пульсируют все пять, источник
+   ничем не выделен, и приём не работает.
+
+   transform-box: fill-box обязателен. Без него transform-origin у SVG-круга
+   считается от вьюпорта, а не от самого круга, и кольца разлетаются в угол. */
+
+.marker__ping {
+  fill: none;
+  stroke: $c-brand;
+  stroke-width: 1.5;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Время ЛИНЕЙНОЕ, и это принципиально. С expo-кривой (--e-out) почти весь
+   прогресс съедается в первые кадры: на 10% цикла кольцо уже прозрачное на 60%.
+   Волна не расходится, а вспыхивает и гаснет. Форму задаём кейфреймами. */
+.marker.is-active .marker__ping {
+  animation: ping 2.8s linear infinite;
+}
+
+/* Сдвиг по фазе — кольца идут волнами, а не одним толчком. */
+.marker.is-active .marker__ping:nth-of-type(2) { animation-delay: 0.93s; }
+.marker.is-active .marker__ping:nth-of-type(3) { animation-delay: 1.86s; }
+
+@keyframes ping {
+  0% {
+    transform: scale(1);
+    opacity: 0;
+    stroke-width: 2;
+  }
+  /* Волна рождается почти мгновенно... */
+  8% { opacity: 0.9; }
+
+  /* ...потом расходится с замедлением: половина пути за 40% времени. */
+  40% {
+    transform: scale(5.5);
+    opacity: 0.42;
+    stroke-width: 1.1;
+  }
+
+  100% {
+    transform: scale(9);   /* r=4 → радиус 36px: на карте это уже читается */
+    opacity: 0;
+    stroke-width: 0.4;     /* кольцо истончается, уходя — как настоящая волна */
+  }
+}
+
+/* Подписи живут ВНУТРИ svg: кегль задан в единицах viewBox и масштабируется
+   вместе с плоскостью. Поэтому число здесь крупнее, чем кажется — на экране
+   оно ужимается вместе с картой. */
+.marker__label {
+  font-family: $f-mono;
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  fill: $c-text-soft;
+  text-anchor: middle;
+  transition: fill $t-base $e-out;
+}
+
+/* Подписи по краям карты не должны улетать за кадр. */
+.marker[data-city='baltimore'] .marker__label,
+.marker[data-city='newportBeach'] .marker__label { text-anchor: start; }
+
+/* Источник светится — точка, из которой бьют волны и расходятся дуги,
+   должна быть самым горячим местом на карте. */
+.marker.is-active .marker__dot {
+  fill: $c-brand;
+  r: 5.5;
+  filter: drop-shadow(0 0 7px $c-brand);
+}
+
+.marker.is-active .marker__halo { opacity: 1; }
+.marker.is-active .marker__label { fill: $c-text; }
+
+/* Локация, которая ещё не открылась: контур вместо заливки. Честнее, чем
+   рисовать её наравне с работающими. */
+.marker--soon .marker__dot {
+  fill: transparent;
+  stroke: $c-text-muted;
+  stroke-width: 1.5;
+}
+.marker--soon.is-active .marker__dot {
+  fill: transparent;
+  stroke: $c-brand;
+}
+
+/* Спящие локации — просто точки. Пульсировать должен ОДИН источник,
+   а не все пятеро: иначе глазу не за что зацепиться. */
+
+@media (prefers-reduced-motion: reduce) {
+  .marker__ping { animation: none !important; opacity: 0; }
+}
+
+
+/* Подпись лежит ПОД картой, а не на ней. Раньше она стояла на -1.5rem от низа
+   коробки и накрывала южные штаты — Техас и Флориду, — из-за чего карта снизу
+   читалась обрезанной. Именно это и было «карту не видно целиком». */
+.map__note {
+  position: absolute;
+  left: 0;
+  top: calc(100% + $s-3);
+}
+
+
+/* --- Список локаций -------------------------------------------------------- */
+
+.locs {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 $s-8;
+  border-top: 1px solid $c-line;
+}
+
+.loc {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: $s-4;
+  width: 100%;
+  min-height: 56px;
+  padding: $s-4 0;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid $c-line;
+  text-align: left;
+  transition: padding-left $t-mid $e-expo;
+}
+
+/* Строка выезжает вправо под курсором — движение вместо подсветки фоном. */
+.loc:hover,
+.loc:focus-visible,
+.loc.is-active { padding-left: $s-3; }
+
+.loc__city {
+  font-family: $f-display;
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: $c-text-muted;
+  transition: color $t-base $e-out;
+}
+
+.loc:hover .loc__city,
+.loc:focus-visible .loc__city,
+.loc.is-active .loc__city { color: $c-text; }
+
+.loc__state {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $c-text-dim;
+  white-space: nowrap;
+}
+
+.loc__state b {
+  color: $c-brand;
+  font-weight: 500;
+}
+
+
+/* --- Панель локации -------------------------------------------------------- */
+
+/* Высота зафиксирована по САМОМУ ВЫСОКОМУ состоянию (замерено: 124px —
+   у Cleveland и Newport Beach адрес переносится на две строки, у остальных
+   он в одну). Без этого панель прыгала на 16px при каждой смене города,
+   и вместе с ней дёргался низ секции. */
+.locpanel {
+  min-height: 128px;
+  padding-left: $s-4;
+  border-left: 1px solid $c-line-strong;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity $t-base $e-out,
+              transform $t-mid $e-expo;
+}
+
+.locpanel.is-open {
+  opacity: 1;
+  transform: none;
+}
+
+.locpanel__name {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $c-text;
+  margin-bottom: $s-2;
+}
+
+.locpanel__address {
+  font-size: $fs-sm;
+  line-height: 1.5;
+  color: $c-text-soft;
+  margin-bottom: $s-3;
+}
+
+.locpanel__phone {
+  display: inline-block;
+  min-height: 44px;
+  padding-top: $s-2;
+  font-family: $f-mono;
+  font-size: $fs-sm;
+  letter-spacing: 0.06em;
+  color: $c-brand;
+  transition: color $t-fast $e-out;
+}
+.locpanel__phone:hover { color: $c-brand-hover; }
+.locpanel__phone[hidden] { display: none; }
+
+
+/* ==========================================================================
+   Адаптив
+   ========================================================================== */
+
+@media (max-width: 1080px) {
+  .network { padding-block: $s-16; }
+
+  .network__body {
+    grid-template-columns: 1fr;
+    gap: $s-12;
+  }
+
+  .network__head { margin-bottom: $s-12; }
+
+  /* Подпись остаётся абсолютной. Если сделать её static, она всплывает НАВЕРХ
+     карты: canvas и svg позиционированы абсолютно, и она — единственный
+     элемент в потоке. Просто освобождаем ей место под фигурой. */
+  .map { margin-bottom: $s-8; }
+}
+
+@media (max-width: 560px) {
+  /* Подписи городов на узком экране налезают друг на друга и на дуги.
+     Карта остаётся как схема охвата, а названия читаются в списке ниже. */
+  .marker__label { display: none; }
+
+  .loc__city { font-size: 1.125rem; }
+}
+
+
+/* ===== transport.css ===== */
+/* ==========================================================================
+   SECTION 03 — TRANSPORT   (тёмная)
+
+   Требование клиента №4: национальный конcierge и перевозка. Раньше оно было
+   проговорено одной строкой в секции карты — этого мало.
+
+   Секция стоит СРАЗУ после карты не случайно: карта обещает «продавайте откуда
+   угодно», и первый вопрос человека — «а как машина доедет из моего двора в
+   Кливленд?». Здесь ответ.
+
+   Все факты — с их собственного сайта (/our-process/): грузовик заказывают и
+   оплачивают они, водитель осматривает машину на месте, титул уезжает по
+   предоплаченной FedEx-наклейке, бумаги подписываются с телефона. Ничего не
+   выдумано: условия доставки — не то место, где можно фантазировать.
+   ========================================================================== */
+
+/* Ровный тёмный фон, без бокового свечения. Раньше здесь была радиальная
+   подсветка, как в секции карты, — но теперь за маршрутом стоит кадр гор, и
+   светлое пятно спорило с ним: секция переставала быть однородной, и горы не
+   сливались с фоном. Плоская темнота даёт кадру раствориться без стыка.
+
+   isolation: isolate — чтобы кадр гор (z-index: -1) остался ВНУТРИ секции и не
+   провалился под соседние. И, вместе с z-index: auto у контейнера ниже, это
+   выстраивает порядок слоёв: горы → сетка → маршрут и текст. */
+.transport {
+  position: relative;
+  padding-block: $s-20;
+  background: $c-bg;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Контейнер НЕ создаёт свой контекст наложения (в base.css у него z-index: 1) —
+   иначе весь его контент, включая кадр гор, лёг бы поверх сетки. С auto сетка
+   (z-index: 0) проходит ПО кадру гор, а маршрут и текст остаются над сеткой. */
+.transport > .container { z-index: auto; }
+
+
+/* --- Шапка ----------------------------------------------------------------- */
+
+.transport__head {
+  max-width: 62ch;
+  margin-bottom: $s-16;
+}
+
+.transport__title {
+  font-family: $f-display;
+  font-size: $fs-h2;
+  font-weight: 700;
+  line-height: 0.94;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  margin-block: $s-4 $s-6;
+}
+
+/* Вторая строка — антиквой, как во всех заголовках (правило в base.css). */
+.transport__title em { color: rgba(255, 255, 255, 0.94); }
+
+.transport__lead {
+  font-size: $fs-lead;
+  line-height: 1.6;
+  color: $c-text-soft;
+}
+
+.transport__lead strong {
+  color: $c-text;
+  font-weight: 600;
+}
+
+
+/* --- Маршрут ---------------------------------------------------------------
+   ДУГА, а не прямая. Прямая линия читалась как полоса загрузки; дуга рифмуется
+   с перегонами на карте выше — они там тоже выгнуты, — и сразу говорит «это
+   перелёт через страну», а не «шаг 1-2-3».
+
+   Кривая, точки и каретка живут в одном SVG. Иначе не сходится: на прямой точку
+   можно вести процентами, а на кривой её положение надо брать с самого пути.
+   Каретку ведёт animateMotion по <mpath> — она идёт ровно по нарисованной линии
+   при любой ширине экрана. */
+
+.rail {
+  position: relative;
+  margin-bottom: $s-16;
+}
+
+/* Пейзаж под маршрутом. Каретка едет по горам, а не по пустоте.
+
+   Кадр прижат к НИЗУ рельса (object-position) и растворён маской сверху и с
+   боков: горы поднимаются к линии, а вверху уходят в цвет секции, чтобы не
+   спорить с заголовком. Поверх — скрим, иначе подписи остановок тонут в лесу. */
+.rail__bg {
+  position: absolute;
+  /* Тянем ВЫШЕ рельса: сам рельс низкий, и горам негде подняться до линии.
+     Кадр начинается над маршрутом и заканчивается у подписей — тогда каретка
+     идёт по гребню, а не над плоской полоской внизу. */
+  left: 0;
+  right: 0;
+  top: -180px;
+  bottom: $s-8;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.rail__bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Кадрируем по ЛИНИИ гребня: вершины выходят на высоту маршрута, чтобы
+     каретка шла ровно по хребту. */
+  object-position: 50% 30%;
+  /* Выезжает снизу и проявляется по мере прокрутки: JS ведёт --rail-shift и
+     --rail-fade (см. main.js). Плавность на переходе — движение не дёргается за
+     скроллом. will-change снимает мерцание при перерисовке трансформа. */
+  opacity: var(--rail-fade, 0.85);
+  transform: translateY(var(--rail-shift, 90px));
+  transition: transform $t-slow $e-out,
+              opacity $t-slow $e-out;
+  will-change: transform, opacity;
+  /* Растворяем по краям, чтобы кадр вырастал из секции, а не лежал плашкой. */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+}
+
+/* Скрим поверх кадра: держит контраст подписей и топит лес, чтобы линия
+   маршрута читалась как главная, а горы — как фон. */
+.rail__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom,
+              rgba(11, 13, 16, 0.30) 0%,
+              rgba(11, 13, 16, 0.55) 60%,
+              $c-bg 100%);
+}
+
+.rail__svg {
+  position: relative;   /* над фоном-кадром */
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;       /* кольца пульса выходят за viewBox */
+  color: $c-line-strong;   /* currentColor — цвет градиента линии */
+}
+
+.rail__curve {
+  fill: none;
+  stroke-width: 1;
+  /* Волосяная при любой ширине: без этого SVG растягивает и штрих. */
+  vector-effect: non-scaling-stroke;
+}
+
+
+/* Остановки. Сидят НА кривой (середина выше краёв — так её поднимает
+   квадратичная кривая), а не под ней. */
+
+.rail__stop {
+  fill: $c-bg;
+  stroke: $c-text-muted;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Конечная — красная и залитая: там машина оказывается в итоге. */
+.rail__stop--end {
+  fill: $c-brand;
+  stroke: $c-brand;
+}
+
+/* Кольцо, которое разлетается в момент прибытия. Задержки 0 / 3.2 / 6.4с — те
+   же моменты, что у каретки: синхронность держится длиной цикла, без JS. */
+.rail__ping {
+  fill: none;
+  stroke: $c-brand;
+  stroke-width: 1.5;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: rail-ping 8s linear infinite calc(var(--i) * 3.2s);
+}
+
+@keyframes rail-ping {
+  0%   { transform: scale(1);   opacity: 0.85; }
+  11%  { transform: scale(3.4); opacity: 0; }
+  100% { transform: scale(3.4); opacity: 0; }
+}
+
+
+/* Каретка и хвост.
+
+   Хвост — ЛИНИЯ по маршруту: тот же путь, нарисованный красным, но показанный
+   лишь коротким штрихом, который едет вдоль него вместе с кареткой. Голова
+   штриха совпадает с кареткой не на глаз: dashoffset = (длина хвоста − путь).
+
+   Два штриха: длинный бледный и короткий яркий. Так след плотнее у каретки и
+   тает к концу — градиента вдоль пути в SVG нет, а это его честная замена.
+
+   На стоянке хвост гаснет: у стоящей машины след взялся бы из ниоткуда. */
+
+.rail__car {
+  fill: $c-brand;
+}
+
+/* След — пройденный участок маршрута. Загорается за кареткой и продолжает
+   гореть, пока она стоит: линия не «тянется за машиной», а показывает, сколько
+   уже проехали.
+
+   Комета из короткого штриха здесь не работала: у хвоста жёсткий обрыв
+   (градиента ВДОЛЬ пути в SVG нет — линейный идёт по осям, а не по кривой), и
+   два штриха разной прозрачности давали ступеньку вместо затухания. */
+
+.rail__trace {
+  fill: none;
+  stroke: $c-brand;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: rail-trace 8s linear infinite;
+}
+
+/* Гаснет в самом конце цикла — чтобы маршрут не «стирался» рывком на глазах,
+   а сходил на нет перед новым проходом. */
+@keyframes rail-trace {
+  0%   { opacity: 0; }
+  4%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+
+/* --- Подписи --------------------------------------------------------------- */
+
+.rail__stops {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  list-style: none;
+  padding: 0;
+  margin: $s-4 0 0;
+}
+
+.rail__stops li {
+  position: relative;
+  text-align: center;
+}
+
+/* Крайние подписи прижаты к краям, а не висят по центру своей трети: иначе они
+   разъезжаются с точками, к которым относятся. */
+.rail__stops li:first-child { text-align: left; }
+.rail__stops li:last-child  { text-align: right; }
+
+/* Точки-маркеры у подписей нужны только в мобильной раскладке, где SVG нет.
+   На десктопе точки рисует сам SVG — иначе их было бы по две на остановку. */
+.rail__stops li::before { content: none; }
+
+/* Подпись остановки. В покое приглушена, загорается ровно на ту секунду, пока
+   каретка стоит рядом: взгляд идёт за движением и читает то, что происходит
+   сейчас. Загорается ТОЛЬКО подпись — абзац под ней остаётся ровным, иначе
+   секция начнёт мигать целиком. */
+.rail__label {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: $ls-mono;
+  text-transform: uppercase;
+  color: $c-text-muted;
+  margin-bottom: $s-2;
+}
+
+.rail__stops li:nth-child(1) .rail__label { animation: stop-label 8s linear infinite 0s; }
+.rail__stops li:nth-child(2) .rail__label { animation: stop-label 8s linear infinite 3.2s; }
+.rail__stops li:nth-child(3) .rail__label { animation: stop-label 8s linear infinite 6.4s; }
+
+@keyframes stop-label {
+  0%    { color: $c-text; }
+  12.5% { color: $c-text; }   /* ровно секунда стоянки */
+  17%   { color: $c-text-muted; }
+  100%  { color: $c-text-muted; }
+}
+
+.rail__note {
+  font-size: $fs-sm;
+  line-height: 1.5;
+  color: $c-text-muted;
+  max-width: 30ch;
+  margin-inline: auto;
+}
+
+.rail__stops li:first-child .rail__note { margin-left: 0; }
+.rail__stops li:last-child  .rail__note { margin-right: 0; }
+
+
+/* --- Факты -----------------------------------------------------------------
+   Три вещи, которых нет ни у кого из конкурентов и которые человек проверяет
+   перед тем, как отдать машину. Формулировки — с их сайта, не мои. */
+
+.transport__facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $s-12;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.transport__facts > li {
+  padding-top: $s-6;
+  border-top: 1px solid $c-line;
+}
+
+.fact__title {
+  font-family: $f-display;
+  font-size: $fs-h3;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  margin-bottom: $s-3;
+}
+
+.fact__text {
+  font-size: $fs-sm;
+  line-height: 1.6;
+  color: $c-text-soft;
+}
+
+
+/* ==========================================================================
+   Адаптив
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .transport { padding-block: $s-16; }
+
+  /* Маршрут в колонку: три подписи в ряд на узком экране сжимаются в лапшу.
+     Дуга и каретка тогда не нужны — их роль берёт вертикальный порядок, а
+     точки возвращаем подписям (в SVG они остались бы лежать поперёк). */
+  .rail__svg { display: none; }
+
+  .rail__stops {
+    grid-template-columns: 1fr;
+    gap: $s-8;
+  }
+
+  .rail__stops li,
+  .rail__stops li:first-child,
+  .rail__stops li:last-child {
+    text-align: left;
+    padding-left: $s-6;
+  }
+
+  .rail__stops li::before {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 0;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: $c-bg;
+    border: 1px solid $c-text-muted;
+  }
+
+  .rail__stops li:last-child::before {
+    background: $c-brand;
+    border-color: $c-brand;
+  }
+
+  .rail__note { margin-inline: 0; }
+
+  .transport__facts {
+    grid-template-columns: 1fr;
+    gap: $s-8;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* SMIL-анимацию каретки CSS не остановит — поэтому просто прячем её и хвост.
+     Кривая, точки и подписи остаются: маршрут читается и без движения. */
+  .rail__car,
+  .rail__trace { visibility: hidden; }
+
+  .rail__ping { animation: none; opacity: 0; }
+
+  /* Без анимации подсвечивать нечем — тогда все подписи читаются одинаково
+     ярко, а не сидят вечно приглушёнными. */
+  .rail__label { animation: none; color: $c-text; }
+}
+
+
+/* ===== process.css ===== */
+/* ==========================================================================
+   SECTION 03 — HOW IT WORKS   (светлая тема)
+
+   Язык тот же, что и в тёмных секциях: конденсированные капсы, моно-подписи,
+   волосяные линейки, красный только на акценте. Меняется холст, не почерк.
+   ========================================================================== */
+
+.process {
+  padding-block: $s-24;
+}
+
+
+/* --- Шапка ----------------------------------------------------------------- */
+
+.process__head {
+  max-width: 60ch;
+  margin-bottom: $s-20;
+}
+
+.process__title {
+  font-family: $f-display;
+  font-size: $fs-h2;
+  font-weight: 700;
+  line-height: 0.94;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  margin-bottom: $s-6;
+}
+
+/* Тот же приём, что в герое и на карте: смысловая часть — контуром, не цветом. */
+/* Антиква вместо контура — общее правило в base.css. */
+.process__title em { color: $c-text-soft; }
+
+.process__lead {
+  font-size: $fs-lead;
+  line-height: 1.6;
+  color: $c-text-soft;
+}
+
+
+/* --- Шаги ------------------------------------------------------------------
+   Строки чередуются: фото слева / фото справа. Так глаз идёт зигзагом и не
+   засыпает на третьем повторе одинаковой раскладки. */
+
+.steps {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 $s-24;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: $s-16;
+  padding-block: $s-12;
+  border-top: 1px solid $c-line;
+}
+
+.step:last-child { border-bottom: 1px solid $c-line; }
+
+/* Чётные — фото справа. */
+.step:nth-child(even) .step__media { order: 2; }
+
+.step__media {
+  margin: 0;
+  overflow: hidden;   /* кадрирует зум при наведении */
+}
+
+.step__media img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  transition: transform $t-slow $e-expo;
+}
+
+/* Зум по наведению — только для фотографий (cover). У рендеров-плашек своя
+   механика ниже. */
+.step:hover .step__media:not(.step__media--plate) img { transform: scale(1.03); }
+
+/* Рендер, а не фотография: предмет вырезан и лежит на плашке цвета секции.
+   Кадрировать его нельзя — обрежется телефон, ради которого он и взят, — поэтому
+   contain вместо cover. Пропорция под серию рендеров (4:3). */
+.step__media--plate {
+  overflow: visible;   /* лифт и наклон не должны обрезаться рамкой */
+  /* Перспектива на рамке, а наклон — на картинке внутри: тот же приём, что у
+     карты и телефона. Без perspective rotateX/rotateY плоские, объём не читается. */
+  perspective: 1400px;
+}
+
+/* Все слагаемые трансформа — через переменные, чтобы лифт (CSS по ховеру) и
+   наклон (JS за курсором) складывались в ОДНО значение, а не затирали друг друга.
+   На этом мы уже обжигались: класс с transform молча стирал чужой transform. */
+.step__media--plate img {
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  /* Поля обрезаны, поэтому предмет упирался бы в край колонки. Воздух возвращаем
+     падингом: при object-fit: contain он ужимает саму картинку, а не добавляет
+     полей вокруг. Плашка цвета секции — поля не видно. */
+  padding: $s-6 $s-8;
+  transform:
+    translateY(var(--lift, 0px))
+    scale(var(--scale, 1))
+    rotateX(var(--rx, 0deg))
+    rotateY(var(--ry, 0deg));
+  transition: transform $t-mid $e-out;
+}
+
+/* Три рендера — как три отдельных плавающих элемента. На наведении по ВСЕЙ
+   секции все три чуть приподнимаются, а тот, на который навёл прямо, выходит
+   вперёд сильнее. Наклон за курсором добавляет JS (см. main.js).
+   Только изображения — текст не трогаем.
+
+   БЕЗ transition-delay. Раньше здесь был сдвиг по времени (70/140мс) ради
+   лесенки подъёма — но та же задержка тормозила и НАКЛОН за курсором: шаги 2 и 3
+   отвечали с запозданием, будто 3D у них нет, живым был только первый. А
+   обнулить её через .step:hover не выходило: у nth-child-правила специфичность
+   выше, оно побеждало. Задержку убрали совсем — наклон важнее лёгкой лесенки. */
+.process:hover .step__media--plate img { --lift: -8px; --scale: 1.015; }
+
+.step:hover .step__media--plate img { --lift: -16px; --scale: 1.04; }
+
+.step__body { max-width: 44ch; }
+
+/* Номер — крупный, контуром. Он ведёт по последовательности, но не орёт. */
+.step__num {
+  font-family: $f-display;
+  font-size: clamp(3rem, 5vw, 4.5rem);
+  font-weight: 700;
+  line-height: 0.8;
+  letter-spacing: -0.02em;
+  color: transparent;
+  -webkit-text-stroke: 1px $c-line-strong;
+  margin-bottom: $s-4;
+}
+
+.step__kicker {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: $ls-mono;
+  text-transform: uppercase;
+  color: $c-brand;
+  margin-bottom: $s-3;
+}
+
+.step__title {
+  font-family: $f-display;
+  font-size: $fs-h3;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  margin-bottom: $s-4;
+}
+
+.step__text {
+  color: $c-text-soft;
+  line-height: 1.6;
+}
+
+.step__text strong {
+  color: $c-text;
+  font-weight: 600;
+}
+
+
+/* --- Плашка обещания -------------------------------------------------------
+   Их собственный порядок действий, вытащенный из стены текста: чек приходит
+   РАНЬШЕ эвакуатора. Это сильнейший аргумент на всём сайте, поэтому он и
+   единственное место в секции, которое инвертировано в тёмное — глаз обязан
+   об него споткнуться. */
+
+/* Фон и цвет текста приходят из .theme-dark на самом элементе — см. tokens.css.
+   Не задавать их здесь: внутри светлой секции --c-void светлый, и плашка
+   молча превращается в белый текст на светло-сером. */
+.pledge {
+  position: relative;
+  padding: $s-12 $s-10;
+}
+
+/* Красные засечки по углам — рифма с формой в герое. */
+.pledge::before,
+.pledge::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 1px solid $c-brand;
+}
+.pledge::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+.pledge::after  { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+
+.pledge__label {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: $ls-mono;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: $s-5;
+}
+
+.pledge__claim {
+  font-family: $f-display;
+  font-size: clamp(1.75rem, 1rem + 2.6vw, 3rem);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  max-width: 20ch;
+  margin-bottom: $s-6;
+}
+
+/* Единственное слово, ради которого всё написано. */
+.pledge__claim em {
+  font-style: normal;
+  color: $c-brand-hover;
+}
+
+.pledge__detail {
+  max-width: 62ch;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.72);
+  margin-bottom: $s-10;
+}
+
+.pledge__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $s-10;
+  margin: 0 0 $s-8;
+  padding-top: $s-8;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.pledge__facts dt {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: $s-2;
+}
+
+.pledge__facts dd {
+  margin: 0;
+  font-family: $f-display;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.pledge__note {
+  max-width: 62ch;
+  font-size: $fs-sm;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+
+/* ==========================================================================
+   Адаптив
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .process { padding-block: $s-16; }
+  .process__head { margin-bottom: $s-12; }
+
+  .step {
+    grid-template-columns: 1fr;
+    gap: $s-8;
+    padding-block: $s-10;
+  }
+
+  /* Порядок сбрасываем: на узкой колонке фото обязано идти ПЕРЕД текстом,
+     иначе на чётных шагах оно уезжает под описание и связь теряется. */
+  .step:nth-child(even) .step__media { order: 0; }
+
+  .step__body { max-width: none; }
+
+  .pledge { padding: $s-10 $s-6; }
+  .pledge__facts { gap: $s-6 $s-8; }
+}
+
+
+/* ===== buy.css ===== */
+/* ==========================================================================
+   SECTION 05 — WHAT WE'RE LOOKING FOR   (светлая)
+
+   Дыра, которой не было ни в брифе, ни в нашем макете, но есть на живом сайте:
+   человек нигде не узнаёт, ЧТО именно они покупают и от какой суммы.
+
+   Это не косметика. Блок отсеивает мусорные заявки: владелец Camry не должен
+   доходить до формы, а владелец 812 Superfast — должен увидеть себя в списке
+   и понять, что пришёл по адресу.
+
+   Порог, четыре типа кузова и марки в них — с ibuylc.com, дословно. Заголовок —
+   их собственная фраза «we aren't interested in cars just anyone can buy»: она
+   честнее и злее любой, которую я бы написал.
+
+   Алфавитной стены из 28 марок здесь больше нет: марки и так названы в каждой
+   карточке, а список ниже повторял их второй раз — и висел мёртвым грузом.
+   ========================================================================== */
+
+.buy {
+  position: relative;
+  padding-block: $s-24;
+  border-top: 1px solid $c-line;
+}
+
+
+/* --- Шапка ----------------------------------------------------------------- */
+
+.buy__head {
+  max-width: 58ch;
+  margin-bottom: $s-12;
+}
+
+.buy__title {
+  font-family: $f-display;
+  font-size: $fs-h2;
+  font-weight: 700;
+  line-height: 0.94;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  margin-block: $s-4 $s-6;
+}
+
+/* Вторая строка — антиквой (общее правило в base.css). */
+.buy__title em { color: $c-text-soft; }
+
+.buy__lead {
+  font-size: $fs-lead;
+  line-height: 1.6;
+  color: $c-text-soft;
+}
+
+
+/* --- Порог -----------------------------------------------------------------
+   Единственная цифра, которую человек обязан унести с собой. Поэтому она стоит
+   отдельной строкой между линейками, а не прячется в абзаце. */
+
+.floor {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: $s-6 $s-10;
+  padding-block: $s-8;
+  border-top: 1px solid $c-line-strong;
+  border-bottom: 1px solid $c-line;
+  margin-bottom: $s-16;
+}
+
+.floor__num {
+  font-family: $f-display;
+  font-size: clamp(2.75rem, 5.5vw, 4.5rem);
+  font-weight: 700;
+  line-height: 0.85;
+  letter-spacing: -0.01em;
+  /* Табличные цифры обязательны: набегающее число иначе дёргает всю строку. */
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Плюс — красный. Это единственное место в секции, где появляется акцент, и он
+   здесь по делу: красный у нас значит движение, а плюс значит «и выше». Именно
+   он превращает порог из отсечки в старт. */
+.floor__num em {
+  font-style: normal;
+  color: $c-brand;
+}
+
+.floor__note {
+  font-size: $fs-sm;
+  line-height: 1.6;
+  color: $c-text-muted;
+  max-width: 46ch;
+}
+
+.floor__note strong {
+  color: $c-text;
+  font-weight: 600;
+}
+
+
+/* --- Типы ------------------------------------------------------------------
+   Четыре типа кузова — их деление, не моё. Карточки СРАЗУ под фото: как только
+   Alex отдаст кадры, <img> встаёт в .type__media, и правила ниже уже готовы.
+   Пока кадров нет, карточка живёт типографикой — как и должна печатная полоса,
+   а не как дырка с надписью «здесь будет фото». */
+
+.types {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: $s-10;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 $s-16;
+}
+
+.types > li {
+  padding-top: $s-6;
+  border-top: 1px solid $c-line;
+}
+
+/* Скругление — единственное на сайте, кроме телефона в отзывах. Здесь оно
+   уместно: это витрина, а не чертёж, и мягкий угол снимает с карточек
+   казённость. Радиус берём из токена, а не с потолка. */
+.type__media {
+  margin: 0 0 $s-5;
+  border-radius: $r-lg;
+  overflow: hidden;   /* и кадрирует зум при наведении, и режет углы картинке */
+}
+
+.type__media img {
+  width: 100%;
+  /* height: auto обязателен. Атрибуты width/height в разметке — это
+     презентационная подсказка CSS (height: 1059px), и пока её не сбросить,
+     aspect-ratio молча игнорируется: картинка выходила во всю натуральную
+     высоту и вытягивала карточку в столб. */
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  transition: transform $t-slow $e-expo;
+}
+
+.types > li:hover .type__media img { transform: scale(1.03); }
+
+.type__title {
+  font-family: $f-display;
+  font-size: $fs-h3;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  margin-bottom: $s-3;
+}
+
+.type__makes {
+  font-size: $fs-sm;
+  line-height: 1.6;
+  color: $c-text-muted;
+}
+
+
+/* ==========================================================================
+   Адаптив
+   ========================================================================== */
+
+@media (max-width: 1080px) {
+  .types { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+  .buy { padding-block: $s-16; }
+
+  /* Сумма и подпись в столбец: втиснутая во вторую колонку подпись на узком
+     экране сжимается в лапшу по два слова. */
+  .floor {
+    grid-template-columns: 1fr;
+    gap: $s-4;
+  }
+
+  .types {
+    grid-template-columns: 1fr;
+    gap: $s-8;
+  }
+}
+
+
+/* ===== reviews.css ===== */
+/* ==========================================================================
+   SECTION 04 — REVIEWS   (светлая тема)
+
+   Никаких карточек со скруглениями и тенями: отзывы разделяются волосяными
+   линейками, как в печатной вёрстке. Цитата — это текст, а не плитка.
+   ========================================================================== */
+
+.reviews {
+  padding-block: $s-24;
+  border-top: 1px solid $c-line;
+}
+
+
+/* --- Шапка ----------------------------------------------------------------- */
+
+.reviews__head {
+  max-width: 58ch;
+  margin-bottom: $s-16;
+}
+
+.reviews__title {
+  font-family: $f-display;
+  font-size: $fs-h2;
+  font-weight: 700;
+  line-height: 0.94;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  margin-bottom: $s-6;
+}
+
+/* Антиква вместо контура — общее правило в base.css. */
+.reviews__title em { color: $c-text-soft; }
+
+.reviews__lead {
+  font-size: $fs-lead;
+  line-height: 1.6;
+  color: $c-text-soft;
+}
+
+
+/* --- Рейтинг ---------------------------------------------------------------
+   5.0 по 95 отзывам — СВОЙ рейтинг iBuy в Google. Рядом, в том же блоке, цифра
+   сети (4.3 / 461 у Marshall Goldman): это разные компании и разные числа, и
+   смешивать их нельзя. Поэтому атрибуция стоит в блоке, а не сноской. */
+
+.rating {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: center;
+  gap: $s-6 $s-8;
+  padding-block: $s-8;
+  border-top: 1px solid $c-line-strong;
+  border-bottom: 1px solid $c-line;
+  margin-bottom: $s-16;
+}
+
+.rating__score {
+  font-family: $f-display;
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 700;
+  line-height: 0.85;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Звёзды: серая подложка + красная заливка по проценту. Ширина считается
+   от оценки (4.3 / 5 = 86%), а не подгоняется на глаз. */
+.stars {
+  position: relative;
+  display: inline-block;
+  font-size: 1.25rem;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.stars__base { color: $c-line-strong; }
+
+.stars__fill {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  color: $c-brand;
+}
+
+.rating__count {
+  margin-top: $s-3;
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: $ls-mono;
+  text-transform: uppercase;
+  color: $c-text-muted;
+  white-space: nowrap;
+}
+
+.rating__attrib {
+  font-size: $fs-sm;
+  line-height: 1.6;
+  color: $c-text-muted;
+  max-width: 48ch;
+}
+
+.rating__attrib strong {
+  color: $c-text;
+  font-weight: 600;
+}
+
+
+/* --- Раскладка: текст + телефон -------------------------------------------- */
+
+.reviews__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 272px);
+  gap: $s-16;
+  align-items: start;
+  margin-bottom: $s-16;
+}
+
+
+/* --- Телефон, 3D ------------------------------------------------------------
+   Тот же приём, что и у карты: предмет лежит в перспективе, а не наклеен
+   картинкой. Наклон реальный (rotateY/rotateX), экран отодвинут по Z, поэтому
+   при движении курсора содержимое сдвигается относительно корпуса — параллакс
+   получается сам, его не надо подделывать.
+
+   Корпус нарисован нашим языком: волосяной контур, никакого глянца, бликов и
+   фотореализма — ровно за них старый сайт и получил в аудите. Единственное
+   скругление на сайте — здесь, и оно оправдано: телефон и есть скруглённый
+   предмет. */
+
+.phone {
+  position: sticky;
+  top: calc($header-h + $s-8);
+  perspective: 1400px;
+  perspective-origin: 50% 45%;
+}
+
+.phone__frame {
+  position: relative;
+  border: 1px solid $c-line-strong;
+  border-radius: 30px;
+  padding: 10px;
+  background: $c-surface;
+  transform-style: preserve-3d;
+  /* Углы задаются переменными: JS двигает только их, а состояние покоя
+     остаётся в CSS — на тач-устройствах телефон так и стоит наклонённым. */
+  --ry: -15deg;
+  --rx: 7deg;
+  transform: rotateY(var(--ry)) rotateX(var(--rx));
+  /* Не --t-slow: углы теперь ведёт ещё и скролл, а 760мс на скролле читаются
+     как задержка. 480мс работают демпфером и не отстают. */
+  transition: transform $t-mid $e-out;
+}
+
+/* Торец. Одна плоскость, отодвинутая назад по Z: даёт толщину устройства,
+   когда корпус повёрнут. */
+.phone__frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 30px;
+  background: $c-line;
+  transform: translateZ(-14px);
+}
+
+/* Тень предмета на полу — не «тень карточки». Разница принципиальная: box-shadow
+   с тем же скруглением поехал бы вместе с корпусом и читался бы как приподнятая
+   плашка. Здесь это отдельное размытое пятно ПОД телефоном, из-за которого он
+   читается висящим над поверхностью, а не наклеенным на неё.
+
+   Без 3D-трансформа намеренно. Первая версия имела rotateX(78°) + translateZ:
+   поворот сплющил пятно до 19px, перспектива отодвинула и уменьшила — тень
+   пропала совсем. Да и по смыслу тень на полу не вращается вместе с предметом. */
+.phone::after {
+  content: '';
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: -22px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 50%, rgba(10, 12, 16, 0.34), transparent 70%);
+  filter: blur(16px);
+  /* Без z-index пятно легло бы ПОВЕРХ корпуса: .phone задаёт перспективу, но не
+     preserve-3d, поэтому порядок отрисовки решает разметка, а не глубина. */
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Вырез камеры — единственная «деталь устройства». Кнопки и динамики
+   превратили бы это в стоковый макет. */
+.phone__notch {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  width: 66px;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.18);
+  transform: translate3d(-50%, 0, 2px);
+  z-index: 2;
+}
+
+.phone__screen {
+  position: relative;
+  overflow: hidden;          /* блик не должен вылезать за стекло */
+  border-radius: 22px;
+  /* Три источника света на глубокой сини. Цвета — те же гугловские, что у звёзд
+     и кольца: синий сверху слева, красный справа, зелёный снизу под галочкой.
+     Экран подсвечен изнутри тем, что на нём показывают.
+
+     Синее пятно поднимает фон под верхней подписью почти вчетверо против
+     прежнего чёрного — поэтому моно-подписи ниже пришлось сделать плотнее (68%
+     вместо 40%). На старом #0B0D10 они держали контраст, здесь бы не удержали. */
+  background:
+    radial-gradient(100% 60% at 14% 2%,  rgba(66, 133, 244, 0.50), transparent 62%),
+    radial-gradient(75% 52% at 98% 20%,  rgba(234, 67, 53, 0.26),  transparent 64%),
+    radial-gradient(95% 58% at 50% 108%, rgba(52, 168, 83, 0.28),  transparent 68%),
+    #060D1B;
+  padding: $s-10 $s-5 $s-6;
+  /* Пропорция ~0.57 — телефон. На 380px читалось планшетом. */
+  min-height: 460px;
+  display: flex;
+  flex-direction: column;
+  transform-style: preserve-3d;
+}
+
+.phone__label {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: $ls-mono;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.68);
+  margin-bottom: $s-5;
+  transform: translateZ(12px);
+}
+
+
+/* --- Экран: пять звёзд → галочка --------------------------------------------
+   Отзывы уже набраны слева. Повторять их здесь же — дублирование в пределах
+   одного взгляда, поэтому телефон показывает не ленту, а результат.
+
+   Цвета гугловские: 5.0 по 95 отзывам — это рейтинг iBuy именно в Google.
+   Палитра называет источник, не подделывая логотип. */
+
+.verdict {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $s-6;
+  transform: translateZ(28px);   /* содержимое парит над стеклом */
+}
+
+.verdict__stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 104px;
+}
+
+/* Цветное свечение под сценой. Разгорается на галочке — момент, ради которого
+   всё и затевалось. */
+.verdict__glow {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(52, 168, 83, 0.30), transparent 65%);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity $t-slow $e-out, transform $t-slow $e-out;
+}
+
+.verdict.is-check .verdict__glow {
+  opacity: 1;
+  transform: scale(1);
+}
+
+
+/* Звёзды */
+
+.verdict__stars {
+  grid-area: 1 / 1;
+  display: flex;
+  gap: 6px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.verdict__stars li {
+  opacity: 0;
+  transform: scale(0.3) rotate(-25deg);
+  transition: opacity 260ms $e-out, transform 420ms $e-back;
+}
+
+/* Зажигаются по одной: шаг 110мс от индекса. Это и есть «считающийся» результат. */
+.verdict.is-stars .verdict__stars li {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--i) * 110ms);
+}
+
+/* На галочке звёзды схлопываются к центру — не исчезают, а собираются в неё. */
+.verdict.is-check .verdict__stars li {
+  opacity: 0;
+  transform: scale(0.2);
+  transition-delay: calc((4 - var(--i)) * 40ms);
+}
+
+.verdict__stars svg {
+  display: block;
+  width: 30px;
+  height: 30px;
+}
+
+/* Четыре цвета Google, пятая замыкает круг синим. */
+.verdict__stars li:nth-child(1) svg { fill: #4285F4; }
+.verdict__stars li:nth-child(2) svg { fill: #EA4335; }
+.verdict__stars li:nth-child(3) svg { fill: #FBBC05; }
+.verdict__stars li:nth-child(4) svg { fill: #34A853; }
+.verdict__stars li:nth-child(5) svg { fill: #4285F4; }
+
+
+/* Галочка. Кольцо и птичка обводятся по длине пути (stroke-dashoffset),
+   поэтому переход идёт в обе стороны и цикл замыкается без перезапуска. */
+
+.verdict__check {
+  grid-area: 1 / 1;
+  width: 96px;
+  height: 96px;
+  overflow: visible;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity 240ms $e-out, transform 520ms $e-back;
+}
+
+.verdict.is-check .verdict__check {
+  opacity: 1;
+  transform: none;
+  transition-delay: 120ms;
+}
+
+.verdict__ring {
+  stroke: url(#g-ring);
+  stroke-width: 3;
+  stroke-dasharray: 264;          /* 2πr при r=42 */
+  stroke-dashoffset: 264;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset $t-slow $e-out;
+}
+
+.verdict.is-check .verdict__ring {
+  stroke-dashoffset: 0;
+  transition-duration: 700ms;
+  transition-delay: 140ms;
+}
+
+.verdict__tick {
+  stroke: #34A853;
+  stroke-width: 6;
+  /* Длина пути ≈ 56. Берём с запасом: если dasharray короче пути, штрих
+     повторяется и у птички отъедает хвост. */
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  transition: stroke-dashoffset 300ms $e-out;
+}
+
+.verdict.is-check .verdict__tick {
+  stroke-dashoffset: 0;
+  transition-duration: 420ms;
+  transition-delay: 560ms;        /* после кольца, а не одновременно с ним */
+}
+
+
+/* Цифра и подпись стоят всегда: анимация меняет картинку, а не факт. */
+
+.verdict__score {
+  font-family: $f-display;
+  font-size: 3.25rem;
+  font-weight: 700;
+  line-height: 0.85;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  margin-top: $s-4;
+}
+
+.verdict__meta {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: $ls-mono;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.66);
+  text-align: center;
+}
+
+/* Табличные цифры обязательны: без них набегающее число дёргает строку. */
+#verdict-count { font-variant-numeric: tabular-nums; }
+
+
+/* --- Блик -------------------------------------------------------------------
+   Полоса света идёт по стеклу один раз — в момент галочки. Анимация привязана
+   к классу состояния, поэтому перезапускается каждый цикл сама.
+
+   Полоса узкая и слабая (10% белого). Всё, что ярче, немедленно превращается
+   в глянец стокового макета — то самое, за что старый сайт получил в аудите. */
+
+.phone__sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 22px;
+  background: linear-gradient(105deg,
+              transparent 42%,
+              rgba(255, 255, 255, 0.10) 50%,
+              transparent 58%);
+  opacity: 0;
+  transform: translateX(-130%);
+}
+
+/* 2.2с, а не 900мс: быстрая полоса читается как вспышка-«блик из фотошопа».
+   Медленный проход выглядит как свет, поворачивающийся вместе с предметом.
+   Кривая линейная: у света нет разгона и торможения — это не предмет. */
+.verdict.is-check ~ .phone__sheen {
+  animation: sheen 2200ms linear 260ms;
+}
+
+@keyframes sheen {
+  from { opacity: 0; transform: translateX(-130%); }
+  18%  { opacity: 1; }
+  82%  { opacity: 1; }
+  to   { opacity: 0; transform: translateX(130%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phone__sheen { display: none; }
+}
+
+
+/* --- Отзывы ----------------------------------------------------------------
+   Цитата набрана НЕ конденсированным Antonio: он для заголовков, а длинную
+   человеческую речь в узких капсах читать невозможно. */
+
+.review__quote {
+  margin: 0 0 $s-5;
+  font-size: $fs-lead;
+  line-height: 1.55;
+  color: $c-text;
+  text-wrap: pretty;
+}
+
+/* Кавычка висит в поле — строка начинается ровно по сетке. */
+.review__quote::before {
+  content: '\201C';
+  margin-left: -0.42em;
+}
+
+.review__quote em {
+  font-style: normal;
+  font-weight: 600;
+  color: $c-brand;
+}
+
+.review__by {
+  display: flex;
+  align-items: baseline;
+  gap: $s-3;
+  flex-wrap: wrap;
+}
+
+.review__name {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: $ls-mono;
+  text-transform: uppercase;
+  color: $c-text;
+}
+
+.review__where {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $c-text-dim;
+}
+
+/* Развёрнутый — крупнее и на всю ширину. */
+.review--lead {
+  margin: 0 0 $s-12;
+  padding-bottom: $s-12;
+  border-bottom: 1px solid $c-line;
+}
+
+/* 46ch, а не 34: на 34 цитата вытягивалась в девять строк узкой колонкой,
+   а справа оставалось мёртвое поле. Верхняя граница читаемой строки — около
+   65 знаков, так что запас ещё есть. */
+.review--lead .review__quote {
+  font-size: clamp(1.25rem, 0.9rem + 1.3vw, 1.75rem);
+  line-height: 1.4;
+  max-width: 46ch;
+}
+
+
+/* Сетка коротких. Разделены линейками, а не заперты в карточки. */
+.reviews__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $s-12 $s-16;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 $s-16;
+}
+
+.reviews__grid > li {
+  padding-top: $s-8;
+  border-top: 1px solid $c-line;
+}
+
+
+/* --- Возврат к форме -------------------------------------------------------
+   Доверие построено — действие должно быть под рукой, а не через полстраницы. */
+
+.reviews__cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $s-8;
+  flex-wrap: wrap;
+  padding-top: $s-10;
+  border-top: 1px solid $c-line-strong;
+}
+
+.reviews__ask {
+  font-family: $f-display;
+  font-size: $fs-h3;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  max-width: 30ch;
+}
+
+
+/* ==========================================================================
+   Адаптив
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .reviews { padding-block: $s-16; }
+  .reviews__head { margin-bottom: $s-12; }
+
+  /* Оценка и звёзды остаются в строке, атрибуция уходит под них: втиснутая
+     в третью колонку, она на узком экране сжимается в лапшу по два слова. */
+  .rating {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: $s-5;
+  }
+  .rating__attrib { grid-column: 1 / -1; }
+
+  /* Телефон уходит под текст и перестаёт липнуть: sticky-элемент в один
+     столбец — это просто блок, который зря держит скролл. */
+  .reviews__body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: $s-12;
+  }
+
+  .phone {
+    position: static;
+    max-width: 272px;
+    margin-inline: auto;
+  }
+
+  .reviews__grid {
+    grid-template-columns: 1fr;
+    gap: $s-10;
+  }
+
+  .reviews__cta { align-items: flex-start; }
+}
+
+
+/* ===== quote-glass.css ===== */
+/* ==========================================================================
+   ФОРМА — ЧЁРНОЕ МАТОВОЕ СТЕКЛО (общий слой)
+   Подключается и к index.html, и к index_2.html после hero.css. Единый вид
+   формы на обеих страницах: дарк-стекло, поля-колодцы, капс-плейсхолдеры,
+   стопка в одну колонку, помещается в экран любой высоты.
+   ========================================================================== */
+
+
+/* --- ФОРМА: ЧЁРНОЕ МАТОВОЕ СТЕКЛО -------------------------------------------
+   Тёмная «ювелирная» панель на просвет. Горы и дом за ней размываются сквозь
+   стекло, но тонированное в чёрный — читается дороже светлого: как затемнённое
+   стекло лимузина, а не бумажный бланк. Текст светлый, поля — колодцы на
+   просвет, единственный цвет — красный на эйрбоу и кнопке. */
+
+.quote {
+  /* Тёмный тон достаточно плотный (0.6+), чтобы белый текст держался даже над
+     светлым закатным небом за стеклом. Лёгкий градиент — блик света по стеклу. */
+  background:
+    linear-gradient(160deg,
+      rgba(16, 18, 22, 0.66) 0%,
+      rgba(11, 13, 16, 0.60) 45%,
+      rgba(9, 10, 13, 0.62) 100%);
+  backdrop-filter: blur(44px) saturate(1.3);
+  -webkit-backdrop-filter: blur(44px) saturate(1.3);
+  color: #fff;
+  padding: $s-8 $s-8 $s-6;
+  /* Светлая стеклянная кромка ловит свет по краю тёмного стекла. */
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 60px 130px -34px rgba(0, 0, 0, 0.95),
+    0 12px 34px -14px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10);   /* верхний внутренний блик */
+}
+
+/* Без backdrop-filter стекло не работает — панель обязана стать непрозрачной. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .quote { background: $c-surface; }
+}
+
+/* Блик по верхней кромке — узкая световая полоса, «где свет скользит по стеклу».
+   border: 0 обязателен: у hero.css ::after была красная рамка углового тика, и
+   без сброса она оставалась красной чертой по краю панели. */
+.quote::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.10), transparent 20%);
+}
+
+/* Красный уголок сверху-слева убран — на тёмном стекле он лишний, чистая
+   кромка спокойнее. */
+.quote::before { display: none; }
+
+
+/* Шапка: крупнее, с эйрбоу и воздухом. Разделитель — светлая волосяная линия. */
+.quote__head {
+  padding-bottom: $s-5;
+  margin-bottom: $s-6;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.quote__eyebrow {
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  letter-spacing: $ls-mono;
+  text-transform: uppercase;
+  color: $c-brand-hover;
+  margin-bottom: $s-3;
+}
+
+.quote__title {
+  font-size: 1.875rem;
+  letter-spacing: 0.005em;
+  color: #fff;
+}
+
+
+/* Подписей над полями НЕТ — их роль взяли плейсхолдеры. Форма читается чище:
+   пять инпутов, ничего лишнего. Label остаётся в разметке и доступен
+   скринридеру, но убран из виду (не display:none — иначе выпал бы из
+   доступности). */
+.quote .field__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+
+/* Поля — тёмные колодцы на просвет: полупрозрачная заливка, светлая волосяная
+   рамка, белый ввод. Фокус светлеет и обводится тонкой светлой рамкой с ореолом. */
+.quote .field__input {
+  height: 52px;
+  padding: 0 $s-4;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 3px;
+  color: #fff;
+  font-size: 0.9375rem;
+  /* Капс с лёгкой разрядкой — телеметрия, а не веб-инпут. Касается и подписи
+     (плейсхолдера), и введённого значения. */
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: border-color $t-base $e-out,
+              background $t-base $e-out,
+              box-shadow $t-base $e-out;
+}
+
+/* Плейсхолдер ярче: он работает подписью поля (Year, Make…). 0.78 — чёткий,
+   но всё ещё чуть тише введённого текста (белого), чтобы подсказка и значение
+   различались. */
+.quote .field__input::placeholder { color: rgba(255, 255, 255, 0.78); }
+
+.quote .field__input:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.30);
+}
+
+.quote .field__input:focus {
+  background: rgba(255, 255, 255, 0.11);
+  border-color: rgba(255, 255, 255, 0.65);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.10);
+}
+
+.quote .field__input[aria-invalid='true'] {
+  border-color: $c-brand;
+  background: rgba(222, 25, 42, 0.10);
+  box-shadow: none;
+}
+.quote .field__input[aria-invalid='true']:focus {
+  box-shadow: 0 0 0 3px $c-brand-glow;
+}
+
+.quote .field__error { color: $c-brand-hover; }
+
+/* Пустой блок ошибки убираем из потока: он резервировал зазор под каждым полем
+   и растягивал стопку. Появляется только когда есть что показать. */
+.quote .field__error:empty { display: none; }
+
+/* Внутренний зазор поля к нулю — теперь расстояние между полями задаёт только
+   сетка (gap), и стопка читается плотной. */
+.quote .field { gap: 0; }
+
+/* Все пять полей в ОДНУ колонку, стопкой — без двухколоночной сетки. Читается
+   как единый вертикальный поток, спокойнее и дороже, чем плитка 2×2. Спейсинг
+   между полями плотный (s-3): стопка не должна разъезжаться. */
+.quote__grid {
+  grid-template-columns: 1fr;
+  gap: 15px;
+  margin-bottom: $s-5;
+}
+
+/* Кнопка выше: главное действие не должно быть мелким. */
+.quote .btn--block {
+  min-height: 54px;
+  letter-spacing: 0.08em;
+}
+
+
+/* --- Форма помещается в экран ЛЮБОЙ высоты, без фолда -----------------------
+   Стопка из пяти полей выше плитки 2×2 и на низких экранах уезжала за сгиб.
+   Сжимаем по ВЫСОТЕ вьюпорта: поля, зазоры, шапку и кнопку — по ступеням.
+   Ширина ни при чём, поэтому запросы по height. Поля у v2 фиксированы в px
+   (не через --ctl-h), поэтому их высоту здесь правим отдельно. */
+
+@media (max-height: 840px) {
+  .quote { padding: $s-6 $s-6 $s-5; }
+  .quote__head { padding-bottom: $s-4; margin-bottom: $s-4; }
+  .quote__eyebrow { margin-bottom: $s-2; }
+  .quote__title { font-size: 1.625rem; }
+  .quote .field__input { height: 46px; }
+  .quote__grid { gap: $s-2; margin-bottom: $s-4; }
+  .quote .btn--block { min-height: 48px; }
+}
+
+@media (max-height: 720px) {
+  .quote { padding: $s-5 $s-5 $s-4; }
+  .quote__head { padding-bottom: $s-3; margin-bottom: $s-3; }
+  .quote__title { font-size: 1.5rem; }
+  .quote .field__input { height: 42px; font-size: 0.875rem; }
+  .quote__grid { gap: 6px; margin-bottom: $s-3; }
+  .quote .btn--block { min-height: 44px; }
+}
+
+@media (max-height: 620px) {
+  .quote { padding: $s-4; }
+  .quote__head { padding-bottom: $s-2; margin-bottom: $s-2; }
+  .quote__eyebrow { margin-bottom: 2px; }
+  .quote__title { font-size: 1.375rem; }
+  .quote .field__input { height: 38px; }
+  .quote__grid { gap: 5px; margin-bottom: $s-2; }
+  .quote .btn--block { min-height: 42px; }
+}
+
+@media (max-width: 560px) {
+  .quote { padding: $s-6 $s-5 $s-5; }
+  .quote .field__input { height: 48px; }
+  .quote__grid { gap: $s-3; }
+}
