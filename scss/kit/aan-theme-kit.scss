@@ -1,0 +1,119 @@
+// ============================================================================
+//  _aan-theme-kit.scss  —  iBuy Luxury Cars  (the ONE file a dev edits per dealer)
+// ----------------------------------------------------------------------------
+//  iBuy is a DARK-FIRST brand (near-black grounds, one red accent). This is the
+//  light Prestige base FLIPPED to dark per the kit's own instructions (BLOCK 2c).
+//  Fonts are named here; the actual faces must be added to fonts.scss as
+//  self-hosted .woff2 (Antonio / Inter Tight / Instrument Serif / JetBrains Mono).
+//  Sass-only, compile-time — defined before `@import "bootstrap"`.
+// ============================================================================
+
+// ─── 1. FONTS ───────────────────────────────────────────────────────────────
+$font-display : ('Antonio', 'Oswald', 'Helvetica Neue', sans-serif) !default;         // headings, hero, CTAs
+$font-body    : ('Inter Tight', -apple-system, 'Segoe UI', sans-serif) !default;       // body, UI, forms
+$font-accent  : ('Instrument Serif', 'Times New Roman', Georgia, serif) !default;      // italic accent line, eyebrows
+$font-mono    : ('JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace) !default; // micro-labels, specs
+
+$fw-light    : 300 !default;
+$fw-regular  : 400 !default;
+$fw-medium   : 500 !default;
+$fw-semibold : 600 !default;
+$fw-bold     : 700 !default;
+
+
+// ─── 2. COLORS ──────────────────────────────────────────────────────────────
+// 2a. The four globals
+$color-primary   : #DE192A !default;   // brand / primary CTA  (iBuy red)
+$color-secondary : #14171C !default;   // dark UI / secondary surface
+$color-accent    : #DE192A !default;   // the "pop" — same red, iBuy uses a single accent
+$color-accent-2  : #F02234 !default;   // brighter red (hover / active)
+$color-text      : #FFFFFF !default;   // default body text (dark theme → light text)
+
+// 2b. Derived text roles
+$color-heading    : #FFFFFF !default;
+$color-muted      : #7C838C !default;  // muted labels (5.2:1 on void — AA)
+$color-ink-700    : #B4BAC2 !default;  // soft body text
+$color-link       : $color-accent !default;
+$color-link-hover : #F02234 !default;
+
+// 2c. Surfaces  —  DARK base (flipped)
+$bg-page      : #0B0D10 !default;   // page background
+$bg-row       : #0B0D10 !default;   // default section row
+$bg-row-alt   : #0F1216 !default;   // alternating row (subtle)
+$bg-invert    : #F6F6F4 !default;   // iBuy LIGHT section (warm bone) — used via .aan-section--light
+$surface-dark : #08090B !default;   // deepest void — header / footer / hero
+$surface-card : #14171C !default;   // cards, panels
+$bg-header    : #08090B !default;
+$bg-footer    : #08090B !default;
+
+// 2d. Lines & states
+$color-border   : rgba(255, 255, 255, 0.10) !default;
+$color-border-2 : rgba(255, 255, 255, 0.20) !default;
+$border-width   : 1px !default;
+$color-success  : #1E8E3E !default;
+$color-danger   : $color-accent !default;
+$color-warning  : #B8860B !default;
+
+// Light-section text roles (used inside .aan-section--light on the dark base)
+$light-text    : #14171C !default;
+$light-muted   : #565C63 !default;
+$light-border  : rgba(20, 23, 28, 0.12) !default;
+$brand-on-light: #C4142A !default;   // red darkened for AA on the bone light
+
+
+// ─── 3. TYPE RAMP ─────────────────────────────────────────────────────────────
+$text-base-size : 16px !default;
+$line-height-base : 1.6 !default;
+
+//  Antonio is condensed → it carries larger optical sizes well; hero scales big.
+$type: (
+  display: (family: $font-display, size: clamp(44px, 7vw, 96px),  weight: $fw-bold,     lh: 0.98, ls: -0.02em,  tt: none),
+  h1:      (family: $font-display, size: clamp(40px, 5.4vw, 84px),weight: $fw-bold,     lh: 1.00, ls: -0.02em,  tt: none),
+  h2:      (family: $font-display, size: clamp(28px, 3.4vw, 44px),weight: $fw-bold,     lh: 1.05, ls: -0.02em,  tt: none),
+  h3:      (family: $font-display, size: clamp(21px, 2.2vw, 30px),weight: $fw-bold,     lh: 1.10, ls: -0.01em,  tt: none),
+  h4:      (family: $font-display, size: 20px,                    weight: $fw-bold,     lh: 1.15, ls: 0,        tt: none),
+  h5:      (family: $font-display, size: 17px,                    weight: $fw-semibold, lh: 1.25, ls: 0,        tt: none),
+  h6:      (family: $font-mono,    size: 12px,                    weight: $fw-medium,   lh: 1.35, ls: 0.16em,   tt: uppercase),
+  subheading: (family: $font-body, size: clamp(18px, 2vw, 22px),  weight: $fw-regular, lh: 1.45, ls: 0,        tt: none),
+  lead:    (family: $font-body,    size: clamp(18px, 1.2vw, 22px),weight: $fw-regular,  lh: 1.5,  ls: 0,        tt: none),
+  body:    (family: $font-body,    size: $text-base-size,         weight: $fw-regular,  lh: $line-height-base, ls: 0, tt: none),
+  small:   (family: $font-body,    size: 14px,                    weight: $fw-regular,  lh: 1.5,  ls: 0,        tt: none),
+  caption: (family: $font-body,    size: 14px,                    weight: $fw-regular,  lh: 1.5,  ls: 0,        tt: none),
+  eyebrow: (family: $font-mono,    size: 11px,                    weight: $fw-medium,   lh: 1.2,  ls: 0.16em,   tt: uppercase),
+) !default;
+
+
+// ─── 4. BUTTONS (1–4) ─────────────────────────────────────────────────────────
+//  iBuy buttons are SQUARED Antonio caps (DNA: "прямые углы, кнопка — брусок").
+$btn-radius         : 0        !default;
+$btn-padding        : 0 24px   !default;   // height via min-height in custom layer
+$btn-font           : $font-display !default;   // Antonio on all CTAs
+$btn-font-size      : 15px     !default;
+$btn-font-weight    : $fw-bold !default;
+$btn-text-transform : uppercase !default;
+$btn-letter-spacing : 0.06em   !default;
+
+$buttons: (
+  1: (bg: $color-primary,   color: #fff,        border: transparent,      hbg: $color-accent-2, hcolor: #fff),  // primary red
+  2: (bg: $color-secondary, color: #fff,        border: transparent,      hbg: #20242B,         hcolor: #fff),  // dark
+  3: (bg: transparent,      color: #fff,        border: $color-border-2,  hbg: rgba(255,255,255,.06), hcolor: #fff),  // ghost/outline
+  4: (bg: $color-accent,    color: #fff,        border: transparent,      hbg: $color-accent-2, hcolor: #fff),  // accent (= primary here)
+) !default;
+
+
+// ─── 5. SURFACES & RHYTHM ───────────────────────────────────────────────────
+$radius-sm : 0    !default;   // iBuy = squared everywhere
+$radius-md : 0    !default;
+$radius-lg : 0    !default;
+$radius-pill : 999px !default;
+
+$shadow-card : 0 3px 10px rgba(0, 0, 0, .35) !default;
+$shadow-pop  : 0 16px 40px -12px rgba(0, 0, 0, .55) !default;
+
+//  4px-based spacing scale
+$space: (1: 4px, 2: 8px, 3: 12px, 4: 16px, 5: 24px, 6: 32px, 7: 48px, 8: 64px,
+         9: 80px, 10: 112px, 11: 140px, 12: 180px) !default;
+
+$container-max : 1440px !default;   // iBuy uses the wide Prestige container
+
+$srp-card-image-ratio : 16 / 10 !default;

@@ -1,0 +1,40 @@
+// ============================================================================
+//  _kit-bridge.scss  —  feed Bootstrap 4 from the AAN theme kit
+// ----------------------------------------------------------------------------
+//  MUST be imported AFTER _aan-theme-kit.scss and BEFORE `@import "bootstrap"`.
+//  Each line sets a real BS4 `!default` variable (names verified against
+//  assets/scss/bootstrap/_variables.scss) from a kit token, so Bootstrap's
+//  reboot, components and `.btn-*/.bg-*/.text-*` utilities theme themselves.
+//  Setting them here (no !default) wins over BS4's stock defaults.
+// ============================================================================
+
+// Brand / theme colors  (_variables.scss:65-70 region)
+$primary:              $color-primary;
+$secondary:            $color-secondary;
+$success:              $color-success;
+$danger:               $color-danger;
+$warning:              $color-warning;
+
+// Body & links  (_variables.scss:143-152)
+$body-bg:              $bg-page;
+$body-color:           $color-text;
+$link-color:           $color-link;
+$link-hover-color:     $color-link-hover;
+
+// Borders  (_variables.scss:229)
+$border-color:         $color-border;
+
+// Typography  (_variables.scss:231-255)
+$font-family-base:     $font-body;
+$font-size-base:       1rem;             // html font-size is 16px (style.scss) → 1rem = 16px
+$headings-font-family: $font-display;
+$headings-font-weight: $fw-bold;
+$headings-line-height: 1.15;
+
+// Radii  (_variables.scss border-radius region + :374 btn radius)
+$border-radius:        $radius-md;
+$border-radius-lg:     $radius-lg;
+$border-radius-sm:     $radius-sm;
+$btn-border-radius:    $btn-radius;
+$btn-border-radius-lg: $btn-radius;
+$btn-border-radius-sm: $btn-radius;

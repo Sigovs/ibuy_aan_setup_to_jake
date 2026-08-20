@@ -1,0 +1,259 @@
+@use "sass:map";
+// ============================================================================
+//  _kit-base.scss  —  base element layer emitted FROM the theme kit
+// ----------------------------------------------------------------------------
+//  Imported AFTER `@import "bootstrap"` (so it overrides BS4 reboot/_type) and
+//  BEFORE the component partials (so components can still override locally).
+//  Styles real elements (h1–h6, p, a, small, .lead, .caption, .eyebrow), the
+//  button system (.btn-1..4), an opt-in form field (.aan-field), and section
+//  row helpers — all from the kit tokens in _aan-theme-kit.scss.
+//
+//  NOTE: body/html are set in style.scss (the entry). Links currently inherit
+//  site-wide via common.scss `a{color:inherit}` (loaded after this) — link
+//  colour adoption is a later migration step; see theme-style-kit-rebase.md.
+// ============================================================================
+
+// ── Headings: drive h1–h6 from the type ramp ────────────────────────────────
+@each $el in (h1, h2, h3, h4, h5, h6) {
+  #{$el} {
+    $t: map.get($type, $el);
+    font-family:    map.get($t, family);
+    font-size:      map.get($t, size);
+    font-weight:    map.get($t, weight);
+    line-height:    map.get($t, lh);
+    letter-spacing: map.get($t, ls);
+    text-transform: map.get($t, tt);
+    color: $color-heading;
+  }
+}
+
+// ── Text styles ─────────────────────────────────────────────────────────────
+p {
+  font-family: $font-body;
+  font-size:   $text-base-size;
+  line-height: $line-height-base;
+  color: $color-text;
+  margin-bottom: map.get($space, 4);
+}
+
+small, .small {
+  font-size: map.get(map.get($type, small), size);
+  line-height: map.get(map.get($type, small), lh);
+}
+
+.lead {
+  $t: map.get($type, lead);
+  font-family: map.get($t, family);
+  font-size:   map.get($t, size);
+  font-weight: map.get($t, weight);
+  line-height: map.get($t, lh);
+}
+
+.caption {
+  $t: map.get($type, caption);
+  font-family:    map.get($t, family);
+  font-size:      map.get($t, size);
+  font-weight:    map.get($t, weight);
+  line-height:    map.get($t, lh);
+  letter-spacing: map.get($t, ls);
+  color: $color-muted;
+}
+
+.eyebrow {
+  $t: map.get($type, eyebrow);
+  display: inline-block;
+  font-family:    map.get($t, family);
+  font-size:      map.get($t, size);
+  font-weight:    map.get($t, weight);
+  line-height:    map.get($t, lh);
+  letter-spacing: map.get($t, ls);
+  text-transform: map.get($t, tt);
+  color: $color-accent;
+}
+
+// ── Button system 1–4 ───────────────────────────────────────────────────────
+%aan-btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $btn-padding;
+  border: $border-width solid transparent;
+  border-radius: $btn-radius;
+  font-family: $btn-font;
+  font-size: $btn-font-size;
+  font-weight: $btn-font-weight;
+  line-height: 1;
+  text-transform: $btn-text-transform;
+  letter-spacing: $btn-letter-spacing;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+}
+
+@each $n, $b in $buttons {
+  .btn-#{$n} {
+    @extend %aan-btn-base;
+    background: map.get($b, bg);
+    color: map.get($b, color);
+    border-color: map.get($b, border);
+
+    &:hover,
+    &:focus {
+      background: map.get($b, hbg);
+      color: map.get($b, hcolor);
+      border-color: map.get($b, hbg);
+    }
+    &:disabled,
+    &.disabled { opacity: .55; cursor: not-allowed; }
+  }
+}
+
+// ── Opt-in form field (the single field token set) ─────────────────────────
+.aan-field {
+  display: block;
+  width: 100%;
+  padding: map.get($space, 3) map.get($space, 4);
+  font-family: $font-body;
+  font-size: $text-base-size;
+  line-height: 1.4;
+  color: $color-text;
+  background: #fff;
+  border: $border-width solid $color-border;
+  border-radius: $radius-sm;
+  appearance: none;
+
+  &::placeholder { color: $color-muted; }
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba($color-primary, .12);
+  }
+}
+
+// ── Section / row helpers (page + alternating + dark feature rows) ──────────
+.aan-section          { padding: map.get($space, 9) 0; background: $bg-row; }
+.aan-section--page    { background: $bg-page; }
+.aan-section--alt     { background: $bg-row-alt; }
+.aan-section--invert  {
+  background: $bg-invert;
+  color: #fff;
+  h1, h2, h3, h4, h5, h6, .display { color: #fff; }
+  p, .lead { color: rgba(255, 255, 255, .72); }
+  .subheading, .caption { color: rgba(255, 255, 255, .60); }
+}
+
+// ── Display / jumbo ─────────────────────────────────────────────────────────
+.display {
+  $t: map.get($type, display);
+  display: block;
+  font-family:    map.get($t, family);
+  font-size:      map.get($t, size);
+  font-weight:    map.get($t, weight);
+  line-height:    map.get($t, lh);
+  letter-spacing: map.get($t, ls);
+  color: $color-heading;
+}
+
+// ── Subheading (secondary line under a heading) ─────────────────────────────
+.subheading {
+  $t: map.get($type, subheading);
+  display: block;
+  font-family: map.get($t, family);
+  font-size:   map.get($t, size);
+  font-weight: map.get($t, weight);
+  line-height: map.get($t, lh);
+  color: $color-muted;
+}
+
+// ── Heading highlight — two-tone headings: <h1>We Want <span class="hl">Your Car</span></h1>
+//    Themable: set $font-accent to a serif (and keep italic) for the classic luxury look.
+.hl {
+  color: $color-accent;
+  font-family: $font-accent;
+  font-style: italic;
+}
+
+// ── Tag / eyebrow stamp (bordered chip with a leading dot) ──────────────────
+.tag {
+  $t: map.get($type, eyebrow);
+  display: inline-flex;
+  align-items: center;
+  gap: .55em;
+  padding: 6px 14px;
+  border: $border-width solid rgba($color-accent, .45);
+  border-radius: $radius-sm;
+  font-family:    map.get($t, family);
+  font-size:      map.get($t, size);
+  font-weight:    map.get($t, weight);
+  letter-spacing: map.get($t, ls);
+  line-height: 1;
+  text-transform: uppercase;
+  color: $color-accent;
+  &::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: $color-accent; }
+}
+
+// ── Feature list (diamond markers) ──────────────────────────────────────────
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    position: relative;
+    padding-left: 1.7em;
+    margin-bottom: map.get($space, 3);
+
+    &::before {
+      content: "\25C6";            // ◆
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-size: .8em;
+      line-height: 1.7;
+      color: $color-accent;
+    }
+  }
+}
+
+// ── Text link + arrow helpers ───────────────────────────────────────────────
+.text-link {
+  color: $color-accent;
+  font-weight: $fw-semibold;
+  text-decoration: none;
+  &:hover { color: $color-link-hover; }
+}
+.has-arrow::after {
+  content: "\2192";               // →
+  display: inline-block;
+  margin-left: .5em;
+  transition: transform .2s ease;
+}
+.has-arrow:hover::after { transform: translateX(4px); }
+
+// ── Card badge (CPO / New / Sale corner pill on a vehicle card image) ───────
+//    Themable status/label badge. Sits in a position:relative card-image corner.
+//    The SRP Sold/Sale-Pending banners stay separate (.image-overlay PNGs from the C2).
+.card-badge {
+  position: absolute;
+  top: map.get($space, 3);
+  left: map.get($space, 3);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: .4em;
+  padding: 5px 12px;
+  border-radius: $radius-sm;
+  font-family: $font-accent;
+  font-size: 11px;
+  font-weight: $fw-semibold;
+  letter-spacing: .08em;
+  line-height: 1;
+  text-transform: uppercase;
+  background: $color-secondary;   // default
+  color: #fff;
+
+  &--cpo  { background: $color-primary; }   // Certified Pre-Owned → brand
+  &--new  { background: $color-accent; }    // New Arrival → accent
+  &--sale { background: $color-danger; }    // Sale / Reduced
+}

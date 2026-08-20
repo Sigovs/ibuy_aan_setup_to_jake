@@ -1,0 +1,53 @@
+// =============================================================================
+//  style.css manifest — flat-root SCSS layout (restructured 2026-06-24).
+//  ⚠️ CASCADE ORDER IS LOAD-BEARING — keep this import order.
+//
+//  Layout: the files a cloning dev edits sit FLAT at the scss/ ROOT — the kit
+//  (_aan-theme-kit), _fonts, the base theme (_base), and the whole page flow
+//  (_header/_footer/_home/_srp/_vdp/_models/_my-garage). Secondary UI pieces live
+//  in components/; all vendor + include-and-forget plumbing lives in includes/
+//  (bootstrap/, reset, css3-mixins, settings, jquery-*, _kit-bridge, _mixins).
+// =============================================================================
+
+// ── Vendor / config (includes/) ──────────────────────────────────────────────
+@import 'includes/settings';        // $templatePath / $fontsPath / $imagesPath (no CSS)
+@import 'includes/css3-mixins';     // css3-prefix mixins (no CSS)
+// (history) Bootstrap 3 + dead vendor libs (slick/lightbox/customscroll/jScrollPane) were
+// removed 2026-06-19; jquery-ui / datetimepicker / fancybox CSS were pulled OUT of this
+// bundle and now lazy-load on demand (see package.json's separate Sass entries + git log).
+@import 'includes/reset';
+
+// ── The kit + its BS4 bridge (MUST precede bootstrap) ────────────────────────
+@import 'aan-theme-kit';            // THE kit — the file a dev edits per dealer (scss/ root)
+@import 'includes/kit-bridge';      // feed BS4 $variables from the kit (plumbing)
+
+// ── Vendor: Bootstrap 4 (under includes/; themed by the kit bridge above) ────
+@import 'includes/bootstrap/bootstrap';
+
+// ── Mixins (plumbing; the legacy var shim was retired 2026-06-24) ────────────
+@import 'includes/mixins';          // font() / transition() / radius() mixins (no CSS)
+
+// ── Base theme: element layer from the kit + @font-face ──────────────────────
+@import 'base';                     // h1-h6 / body / .btn-1..4 / .aan-field / .card-badge, from the kit
+@import 'components/common';        // shared utilities + .primary-btn + sliders (grab-bag; split later)
+@import 'fonts';                    // @font-face — base ships none; dealers add self-hosted faces here
+
+// ── Page flow + components — ORDER PRESERVED (cascade is load-bearing) ────────
+@import 'home';                     // .homeSearch wrapper (salvaged from the retired banner.scss)
+@import 'srp';                      // SRP chrome: toolbar / sort / compare tray / SMS
+@import 'components/popout';        // My Garage register / login / save popups
+@import 'components/search-bar';    // SRP + home search/filter bar
+// (removed 2026-06-30) components/popup-send-to-friend — dead #sendToFriend twin;
+// the live Share/send-to-friend popup is styled in components/forms.scss (#quickContacts).
+// 'models' split OUT of the global bundle 2026-06-25 -> assets/scss/deferred/models.scss,
+// compiled to css/deferred/models.css and enqueued ONLY on single model pages
+// (is_singular('models')) -- mirrors the My Garage split. See deferred/page-models.scss.
+@import 'header';
+@import 'components/forms';         // ajax contact / send-to-friend form
+@import 'components/vehicle-card';  // SRP / featured vehicle card
+@import 'components/inventory-addons'; // optional aan-inventory-addons slots (payment / facts / recent / share)
+@import 'vdp';                      // vehicle detail page
+@import 'footer';
+@import 'components/finance-calc';  // finance widget (VDP Finance tab + /finance-calculator/)
+@import 'components/themekit';      // /themekit preview (scoped under .themekit-preview)
+@import 'print';                    // the VDP "Print" sheet (@media print, VDP-scoped)

@@ -1,0 +1,145 @@
+// ============================================================================
+//  custom.scss — iBuy Luxury Cars, on the AAN stack (Bootstrap 4 + kit tokens)
+// ----------------------------------------------------------------------------
+//  Phase-2 "kit install" of the finished iBuy redesign. Token-driven: every
+//  colour / font / space resolves to the kit tokens in kit/aan-theme-kit.scss,
+//  so a dev re-skins from that ONE file. Loads AFTER vendor/theme.css (Bootstrap
+//  4 + kit base) and deliberately overrides the kit's light defaults to iBuy's
+//  dark brand (expected practice per the kit spec).
+//
+//  Compile:  sass --load-path=scss/kit scss/custom.scss css/custom.css
+// ============================================================================
+@use "sass:map";
+@use "sass:color";
+@import "aan-theme-kit";
+
+$sp: $space;                        // shorthand for map.get($sp, N)
+@function sp($n) { @return map.get($space, $n); }
+
+// ── Base / dark theme ───────────────────────────────────────────────────────
+body {
+  background: $bg-page;
+  color: $color-text;
+  font-family: $font-body;
+  font-size: $text-base-size;
+  line-height: $line-height-base;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img, svg, video { display: block; max-width: 100%; }
+.container { max-width: $container-max; }
+
+// Kit sets a{color:inherit} site-wide — restore explicit link colour where needed.
+a { color: inherit; text-decoration: none; }
+
+// Headings on the dark base are light (kit base colours them $color-heading = #fff already,
+// but theme.css shipped them dark — re-assert for the dark ground).
+h1, h2, h3, h4, h5, h6 { color: $color-heading; }
+
+.u-sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+:focus-visible { outline: 2px solid #1F6FEB; outline-offset: 3px; }
+
+.skip-link {
+  position: absolute; top: sp(4); left: sp(4); z-index: 999;
+  padding: sp(3) sp(5); background: #fff; color: $surface-dark;
+  font-weight: $fw-semibold; transform: translateY(-200%);
+  transition: transform .18s ease;
+  &:focus { transform: translateY(0); }
+}
+
+// ── Type ramp helpers re-skinned to iBuy tokens (override theme.css light build) ──
+@each $el in (h1, h2, h3, h4, h5, h6) {
+  #{$el} {
+    $t: map.get($type, $el);
+    font-family: map.get($t, family);
+    font-size: map.get($t, size);
+    font-weight: map.get($t, weight);
+    line-height: map.get($t, lh);
+    letter-spacing: map.get($t, ls);
+    text-transform: map.get($t, tt);
+  }
+}
+.display {
+  $t: map.get($type, display);
+  display: block;
+  font-family: map.get($t, family); font-size: map.get($t, size);
+  font-weight: map.get($t, weight); line-height: map.get($t, lh);
+  letter-spacing: map.get($t, ls); color: $color-heading;
+}
+.eyebrow {
+  $t: map.get($type, eyebrow);
+  display: inline-block;
+  font-family: map.get($t, family); font-size: map.get($t, size);
+  font-weight: map.get($t, weight); line-height: map.get($t, lh);
+  letter-spacing: map.get($t, ls); text-transform: map.get($t, tt);
+  color: $color-muted;                 // iBuy: eyebrow is muted, not the accent
+}
+.lead, .prose--lead {
+  $t: map.get($type, lead);
+  font-family: map.get($t, family); font-size: map.get($t, size);
+  line-height: map.get($t, lh); color: $color-ink-700;
+}
+
+// The italic-serif accent word inside a heading (iBuy's second-line antiqua).
+// Kit's .hl already sets accent+serif+italic; iBuy wants it to INHERIT colour
+// (not turn red) and sit on its own line as the display second line.
+em, .hl {
+  font-family: $font-accent; font-style: italic; font-weight: $fw-regular;
+  color: inherit;
+}
+h1 em, h2 em, .display em {
+  display: block; font-size: 1.08em; line-height: 1; letter-spacing: -0.005em;
+}
+
+// ── Button system 1–4, re-skinned to iBuy (squared Antonio, min-height) ──────
+%ibtn {
+  display: inline-flex; align-items: center; justify-content: space-between;
+  gap: sp(4); min-height: 54px; padding: $btn-padding;
+  border: $border-width solid transparent; border-radius: $btn-radius;
+  font-family: $btn-font; font-size: $btn-font-size; font-weight: $btn-font-weight;
+  line-height: 1; text-transform: $btn-text-transform; letter-spacing: $btn-letter-spacing;
+  white-space: nowrap; cursor: pointer;
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+@each $n, $b in $buttons {
+  .btn-#{$n} {
+    @extend %ibtn;
+    background: map.get($b, bg); color: map.get($b, color);
+    border-color: map.get($b, border);
+    &:hover, &:focus { background: map.get($b, hbg); color: map.get($b, hcolor); border-color: map.get($b, hbg); }
+  }
+}
+.btn-1, .btn-4 { justify-content: center; }
+.btn-1 svg, .btn-4 svg { margin-left: sp(3); transition: transform .25s cubic-bezier(.16,1,.3,1); }
+.btn-1:hover svg, .btn-4:hover svg { transform: translateX(5px); }
+.btn-3 { justify-content: center; }
+
+// ── Section rhythm — dark rows + iBuy LIGHT section (warm bone) ──────────────
+.aan-section        { padding: sp(9) 0; background: $bg-row; position: relative; }
+.aan-section--page  { background: $bg-page; }
+.aan-section--alt   { background: $bg-row-alt; }
+
+// iBuy light section: flips the ground to bone with dark text (AA-tuned).
+.aan-section--light {
+  background: $bg-invert; color: $light-text;
+  h1, h2, h3, h4, h5, h6, .display { color: $light-text; }
+  p, .lead, .prose, .prose--lead { color: $light-text; }
+  .eyebrow { color: $light-muted; }
+  .prose { color: #3C4148; }
+  hr, .rule { border-color: $light-border; }
+}
+
+// ── Vertical construction lines (iBuy signature), 4-col overlay ──────────────
+.gridlines {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  max-width: $container-max; margin-inline: auto;
+  padding-inline: 30px;                 // BS4 gutter
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  span { border-left: 1px solid rgba(255,255,255,.055); }
+  span:last-child { border-right: 1px solid rgba(255,255,255,.055); }
+}
+.aan-section--light .gridlines span { border-color: rgba(20,23,28,.09); }
+.aan-section > .container, .aan-section > .container-fluid { position: relative; z-index: 1; }

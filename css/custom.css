@@ -1,0 +1,297 @@
+body {
+  background: #0B0D10;
+  color: #FFFFFF;
+  font-family: "Inter Tight", -apple-system, "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img, svg, video {
+  display: block;
+  max-width: 100%;
+}
+
+.container {
+  max-width: 1440px;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #FFFFFF;
+}
+
+.u-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+:focus-visible {
+  outline: 2px solid #1F6FEB;
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 999;
+  padding: 12px 24px;
+  background: #fff;
+  color: #08090B;
+  font-weight: 600;
+  transform: translateY(-200%);
+  transition: transform 0.18s ease;
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+h1 {
+  font-family: "Antonio", "Oswald", "Helvetica Neue", sans-serif;
+  font-size: clamp(40px, 5.4vw, 84px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: none;
+}
+
+h2 {
+  font-family: "Antonio", "Oswald", "Helvetica Neue", sans-serif;
+  font-size: clamp(28px, 3.4vw, 44px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-transform: none;
+}
+
+h3 {
+  font-family: "Antonio", "Oswald", "Helvetica Neue", sans-serif;
+  font-size: clamp(21px, 2.2vw, 30px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-transform: none;
+}
+
+h4 {
+  font-family: "Antonio", "Oswald", "Helvetica Neue", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+h5 {
+  font-family: "Antonio", "Oswald", "Helvetica Neue", sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+h6 {
+  font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.display {
+  display: block;
+  font-family: "Antonio", "Oswald", "Helvetica Neue", sans-serif;
+  font-size: clamp(44px, 7vw, 96px);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #7C838C;
+}
+
+.lead, .prose--lead {
+  font-family: "Inter Tight", -apple-system, "Segoe UI", sans-serif;
+  font-size: clamp(18px, 1.2vw, 22px);
+  line-height: 1.5;
+  color: #B4BAC2;
+}
+
+em, .hl {
+  font-family: "Instrument Serif", "Times New Roman", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  color: inherit;
+}
+
+h1 em, h2 em, .display em {
+  display: block;
+  font-size: 1.08em;
+  line-height: 1;
+  letter-spacing: -0.005em;
+}
+
+.btn-4, .btn-3, .btn-2, .btn-1 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 54px;
+  padding: 0 24px;
+  border: 1px solid transparent;
+  border-radius: 0;
+  font-family: "Antonio", "Oswald", "Helvetica Neue", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-1 {
+  background: #DE192A;
+  color: #fff;
+  border-color: transparent;
+}
+.btn-1:hover, .btn-1:focus {
+  background: #F02234;
+  color: #fff;
+  border-color: #F02234;
+}
+
+.btn-2 {
+  background: #14171C;
+  color: #fff;
+  border-color: transparent;
+}
+.btn-2:hover, .btn-2:focus {
+  background: #20242B;
+  color: #fff;
+  border-color: #20242B;
+}
+
+.btn-3 {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.btn-3:hover, .btn-3:focus {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.btn-4 {
+  background: #DE192A;
+  color: #fff;
+  border-color: transparent;
+}
+.btn-4:hover, .btn-4:focus {
+  background: #F02234;
+  color: #fff;
+  border-color: #F02234;
+}
+
+.btn-1, .btn-4 {
+  justify-content: center;
+}
+
+.btn-1 svg, .btn-4 svg {
+  margin-left: 12px;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-1:hover svg, .btn-4:hover svg {
+  transform: translateX(5px);
+}
+
+.btn-3 {
+  justify-content: center;
+}
+
+.aan-section {
+  padding: 80px 0;
+  background: #0B0D10;
+  position: relative;
+}
+
+.aan-section--page {
+  background: #0B0D10;
+}
+
+.aan-section--alt {
+  background: #0F1216;
+}
+
+.aan-section--light {
+  background: #F6F6F4;
+  color: #14171C;
+}
+.aan-section--light h1, .aan-section--light h2, .aan-section--light h3, .aan-section--light h4, .aan-section--light h5, .aan-section--light h6, .aan-section--light .display {
+  color: #14171C;
+}
+.aan-section--light p, .aan-section--light .lead, .aan-section--light .prose, .aan-section--light .prose--lead {
+  color: #14171C;
+}
+.aan-section--light .eyebrow {
+  color: #565C63;
+}
+.aan-section--light .prose {
+  color: #3C4148;
+}
+.aan-section--light hr, .aan-section--light .rule {
+  border-color: rgba(20, 23, 28, 0.12);
+}
+
+.gridlines {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: 30px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.gridlines span {
+  border-left: 1px solid rgba(255, 255, 255, 0.055);
+}
+.gridlines span:last-child {
+  border-right: 1px solid rgba(255, 255, 255, 0.055);
+}
+
+.aan-section--light .gridlines span {
+  border-color: rgba(20, 23, 28, 0.09);
+}
+
+.aan-section > .container, .aan-section > .container-fluid {
+  position: relative;
+  z-index: 1;
+}
