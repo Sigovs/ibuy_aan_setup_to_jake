@@ -1,0 +1,186 @@
+// ============================================================================
+//  _parity-base.scss — puts back the vanilla base.css behaviour that the kit
+//  (vendor/theme.css: Bootstrap 4 + AAN light base) overrides.
+//
+//  Loaded LAST in custom.scss. Element-level resets only lose to class rules,
+//  so every ported component rule still wins exactly as it did in vanilla.
+//  Source of truth: Sigovs/ibuy 04-build/css/base.css.
+// ============================================================================
+
+// --- Reset: vanilla has `* { margin: 0 }`; the kit adds p/label/heading margins
+h1, h2, h3, h4, h5, h6, p, ol, ul, dl, dd, figure, blockquote, label, pre, address {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+// The kit ships `p { font-family: Inter; color: #1c1c1c; font-size: 16px; … }`
+// from its LIGHT base. In vanilla a paragraph inherits from its section — white
+// on dark, ink on light. This rule is why footer/network copy turned grey/black.
+p {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+  text-wrap: pretty;
+}
+
+dt { font-weight: inherit; }
+
+input, button, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+h1, h2, h3 {
+  font-family: $f-display;
+  font-weight: 700;
+  line-height: $lh-tight;
+  letter-spacing: $ls-tight;
+  text-wrap: balance;
+}
+
+
+// --- Layout primitives ------------------------------------------------------
+// Bootstrap's .container is 15px of gutter; vanilla is the fluid $gutter.
+.container {
+  width: 100%;
+  max-width: $container;
+  margin-inline: auto;
+  padding-inline: $gutter;
+}
+
+.gridlines {
+  max-width: $container;
+  margin-inline: auto;
+  padding-inline: $gutter;
+}
+
+section { position: relative; }
+section > .container { position: relative; z-index: 1; }
+
+
+// --- Second heading line: serif italic, mixed case (never caps) -------------
+main h1 em,
+main h2 em {
+  display: block;
+  font-family: $f-accent;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.08em;
+  line-height: 1;
+  letter-spacing: -0.005em;
+  text-transform: none;
+  color: inherit;
+  -webkit-text-stroke: 0;
+}
+
+
+// --- Micro-label ------------------------------------------------------------
+.eyebrow {
+  display: block;
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  font-weight: 500;
+  line-height: inherit;
+  letter-spacing: $ls-mono;
+  text-transform: uppercase;
+  color: $c-text-muted;
+  margin-bottom: 0;
+}
+
+
+// --- Buttons: vanilla .btn / .btn--primary / .btn--ghost on kit classes -----
+.btn-1, .btn-3 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $s-4;
+  min-height: $ctl-h;
+  padding: 0 $s-5;
+  border: 1px solid transparent;
+  border-radius: 0;
+  font-family: $f-display;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  line-height: $lh-body;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  box-shadow: none;
+  transition: background $t-base $e-out,
+              border-color $t-base $e-out,
+              color $t-base $e-out;
+}
+.btn-1 svg, .btn-3 svg { margin-left: 0; }
+
+.btn-1 { background: $c-brand; color: #fff; }
+.btn-1:hover { background: $c-brand-hover; color: #fff; }
+.btn-1:active { background: $c-brand-press; }
+.btn-1 svg { transition: transform $t-mid $e-expo; }
+.btn-1:hover svg { transform: translateX(5px); }
+
+.btn-3 {
+  background: transparent;
+  border-color: $c-line-strong;
+  color: $c-text;
+}
+.btn-3:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: $c-text;
+}
+
+.btn-block { width: 100%; }
+
+
+// --- Form fields ------------------------------------------------------------
+.field { display: flex; flex-direction: column; gap: $s-2; }
+
+.field__label {
+  display: block;
+  margin-bottom: 0;
+  font-family: $f-mono;
+  font-size: $fs-mono;
+  font-weight: 500;
+  line-height: inherit;
+  letter-spacing: $ls-mono;
+  text-transform: uppercase;
+  color: $c-text-muted;
+}
+
+.field__optional {
+  color: $c-text-dim;
+  text-transform: none;
+  letter-spacing: 0.04em;
+}
+
+.field__input {
+  display: block;
+  width: 100%;
+  font-family: $f-mono;
+}
+
+
+// --- Colour inheritance -----------------------------------------------------
+// Vanilla headings inherit their section's colour (white on dark, ink on
+// light). The blanket `h* { color: $color-heading }` / `.aan-section--light p`
+// pair painted every heading and paragraph one fixed colour, which is what
+// blackened the dark "You get paid" card and the phone screen in Reviews.
+h1, h2, h3, h4, h5, h6 { color: inherit; }
+
+
+// --- Header: kit ships `#header { position: sticky; height: 116px }` --------
+// An ID rule beats the ported .header, so the header sat in the flow at 116px
+// and pushed the hero down. Vanilla: fixed, 96px, shrinking to 66px when stuck.
+#header.header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: $header-h;
+}
+#header.header.is-stuck { height: $header-h-stuck; }
+
+
+// The kit's reset gives every element `font: inherit`, which strips the UA
+// italic from <em>/<i>. Vanilla keeps it (e.g. the footer CTA second line).
+em, i { font-style: italic; }
+
+.skip-link { padding: $s-3 $s-5; border-radius: $r-md; }

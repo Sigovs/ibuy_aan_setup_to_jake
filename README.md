@@ -47,12 +47,25 @@ The HTML links `vendor/theme.css` first, then `css/custom.css` (custom wins). `c
 deliberately **overrides the kit's light defaults** to iBuy's dark theme via ID-qualified
 rules (`#header`, `#footer`) — expected practice per the kit spec.
 
+### Parity layers (why the last two imports exist)
+`custom.scss` ends with two partials that keep this build **identical to the approved
+vanilla design** (Sigovs/ibuy `04-build`), verified element-by-element in the browser:
+- `scss/_parity-base.scss` — undoes the kit/Bootstrap base where it overrides the design
+  (`p { color:#1c1c1c; margin-bottom:16px }`, 15px container gutter, `#header { position:sticky }`,
+  centred `.btn-1`, label/input defaults). Element-level resets, so component rules still win.
+- `scss/_theme-parity.scss` — **generated**, do not hand-edit. Colours for light sections
+  (`.aan-section--light`) and the dark card inside them (`.aan-section--dark`), resolved to
+  literal values from the vanilla theme tokens (no CSS variables). Regenerate with
+  `python3 tools/gen-theme-parity.py <path-to-vanilla>/04-build/css`.
+
 ## 5. File map
 ```
 index.html · about.html · make-audi.html   ← pages (kit classes + #header/#footer hooks + .container)
 css/custom.css                             ← compiled (do not hand-edit; edit the SCSS)
 scss/custom.scss                           ← the iBuy design, token-driven
 scss/kit/aan-theme-kit.scss                ← per-dealer brand file (edit to re-skin)
+scss/_parity-base.scss · _theme-parity.scss ← parity layers (see above; theme one is generated)
+tools/gen-theme-parity.py                  ← generator for _theme-parity.scss
 scss/_fonts.scss                           ← @font-face (self-hosted)
 vendor/theme.css · owl.*.css · js/*.js     ← AAN base (Bootstrap4 + theme + Owl + jQuery)
 vendor/fonts/*.woff2                        ← self-hosted faces

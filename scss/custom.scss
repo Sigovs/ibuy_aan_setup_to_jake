@@ -171,7 +171,9 @@ h1, h2, h3, h4, h5, h6 { color: $color-heading; }
 // The italic-serif accent word inside a heading (iBuy's second-line antiqua).
 // Kit's .hl already sets accent+serif+italic; iBuy wants it to INHERIT colour
 // (not turn red) and sit on its own line as the display second line.
-em, .hl {
+// Only .hl — a bare <em> inherits its paragraph's face, as in vanilla. The serif
+// italic second line of a heading is `main h1 em, main h2 em` (_parity-base).
+.hl {
   font-family: $font-accent; font-style: italic; font-weight: $fw-regular;
   color: inherit;
 }
@@ -845,17 +847,17 @@ h1 em, h2 em, .display em {
   border-top: 1px solid $c-line;
 }
 
-/* Пять локаций в ряд, разделены линейками (верхняя граница у каждой — из
+/* Шесть локаций в ряд, разделены линейками (верхняя граница у каждой — из
    footer.css .fnet > li). Не карточки: только типографика и хайрлайны. */
 .fnet--row {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 0 $s-8;
 }
 .fnet--row > li {
   padding-top: $s-4;
   padding-right: $s-6;
 }
-/* Город чуть мельче, чтобы пять уместились без сжатия. */
+/* Город чуть мельче, чтобы шесть уместились без сжатия. */
 .fnet--row .fnet__city { font-size: 1.1875rem; }
 .fnet--row .fnet__addr { font-size: $fs-xs; max-width: 22ch; }
 
@@ -1531,8 +1533,6 @@ a.loccard__phone:hover { color: $c-brand-hover; }
 $lt: #14171C; $lm: #565C63; $lb: rgba(20,23,28,.12); $lb2: rgba(20,23,28,.30);
 .aan-section--light{
   background: $bg-invert; color: $lt;
-  h1,h2,h3,h4,h5,h6,.display{ color:$lt; }
-  p,.lead,.prose--lead{ color:$lt; }
   .eyebrow{ color:$lm; }
   .prose{ color:#3C4148; }
   .prose strong, .pfeat b{ color:$lt; }
@@ -3025,7 +3025,8 @@ $lt: #14171C; $lm: #565C63; $lb: rgba(20,23,28,.12); $lb2: rgba(20,23,28,.30);
 
 /* Подписи по краям карты не должны улетать за кадр. */
 .marker[data-city='baltimore'] .marker__label,
-.marker[data-city='newportBeach'] .marker__label { text-anchor: start; }
+.marker[data-city='newportBeach'] .marker__label,
+.marker[data-city='westPalmBeach'] .marker__label { text-anchor: start; }
 
 /* Источник светится — точка, из которой бьют волны и расходятся дуги,
    должна быть самым горячим местом на карте. */
@@ -4753,8 +4754,12 @@ $lt: #14171C; $lm: #565C63; $lb: rgba(20,23,28,.12); $lb2: rgba(20,23,28,.30);
 /* Поля — тёмные колодцы на просвет: полупрозрачная заливка, светлая волосяная
    рамка, белый ввод. Фокус светлеет и обводится тонкой светлой рамкой с ореолом. */
 .quote .field__input {
+  /* Базовое .field__input из vanilla base.css (width:100% + моно) в порт не
+     попало — без него инпут сжимался до ширины по умолчанию (~190px). */
+  width: 100%;
   height: 52px;
   padding: 0 $s-4;
+  font-family: $f-mono;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 3px;
@@ -4814,8 +4819,12 @@ $lt: #14171C; $lm: #565C63; $lb: rgba(20,23,28,.12); $lb2: rgba(20,23,28,.30);
 }
 
 /* Кнопка выше: главное действие не должно быть мелким. */
-.quote .btn--block {
+/* Кнопка формы — класс кита .btn-block (не .btn--block из vanilla). Кит
+   центрирует .btn-1; здесь, как в оригинале, подпись слева, стрелка справа. */
+.quote .btn-block {
   min-height: 54px;
+  justify-content: space-between;
+  padding: 0 $s-5;
   letter-spacing: 0.08em;
 }
 
@@ -4833,7 +4842,7 @@ $lt: #14171C; $lm: #565C63; $lb: rgba(20,23,28,.12); $lb2: rgba(20,23,28,.30);
   .quote__title { font-size: 1.625rem; }
   .quote .field__input { height: 46px; }
   .quote__grid { gap: $s-2; margin-bottom: $s-4; }
-  .quote .btn--block { min-height: 48px; }
+  .quote .btn-block { min-height: 48px; }
 }
 
 @media (max-height: 720px) {
@@ -4842,7 +4851,7 @@ $lt: #14171C; $lm: #565C63; $lb: rgba(20,23,28,.12); $lb2: rgba(20,23,28,.30);
   .quote__title { font-size: 1.5rem; }
   .quote .field__input { height: 42px; font-size: 0.875rem; }
   .quote__grid { gap: 6px; margin-bottom: $s-3; }
-  .quote .btn--block { min-height: 44px; }
+  .quote .btn-block { min-height: 44px; }
 }
 
 @media (max-height: 620px) {
@@ -4852,7 +4861,7 @@ $lt: #14171C; $lm: #565C63; $lb: rgba(20,23,28,.12); $lb2: rgba(20,23,28,.30);
   .quote__title { font-size: 1.375rem; }
   .quote .field__input { height: 38px; }
   .quote__grid { gap: 5px; margin-bottom: $s-2; }
-  .quote .btn--block { min-height: 42px; }
+  .quote .btn-block { min-height: 42px; }
 }
 
 @media (max-width: 560px) {
@@ -4860,3 +4869,11 @@ $lt: #14171C; $lm: #565C63; $lb: rgba(20,23,28,.12); $lb2: rgba(20,23,28,.30);
   .quote .field__input { height: 48px; }
   .quote__grid { gap: $s-3; }
 }
+
+
+// ============================================================================
+//  PARITY LAYERS — last on purpose. Restore the approved vanilla design
+//  (Sigovs/ibuy 04-build, index_3) where the kit/Bootstrap base overrode it.
+// ============================================================================
+@import "parity-base";
+@import "theme-parity";
